@@ -6,23 +6,22 @@ const { check, validationResult } = require('express-validator');
 const{ User, Class } = require('../models')
 
 const classCreateValidation = {
-    class:{
+    'data.*.class':{
         exists:{
-            errorMessage: "contact number is required",
+            errorMessage: "class is required",
             options:{checkFalsy: true},
         },
-        notEmpty: { errorMessage: "contact number cannot be empty" },
-        isString: { errorMessage: "contact no should be string" },
+        notEmpty: { errorMessage: "class cannot be empty" },
+        isString: { errorMessage: "class should be string" },
         trim: true,
         escape: true,
     },
-    status:{
+    'data.*.sections':{
         exists:{
-            errorMessage: "status is required",
+            errorMessage: "section is required",
             options:{checkFalsy: true},
         },
-        isNumeric: { errorMessage: "status be in numeric" },
-        isInt:{ errorMessage: "status be integer" },
+        isArray: { errorMessage: "section should be in array" },
         trim: true,
         escape: true,
     },       
