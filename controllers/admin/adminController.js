@@ -7,6 +7,8 @@ const { validationResult, matchedData } = require('express-validator');
 
 const { School, User, Role, Permission, RoleHasPermission } = require('../../models')
 
+const { admissionListSeed } = require('../../seeders/adminSeeder')
+
 schoolOnboardService = async (req, res, next) => {
     try {
         const result = validationResult(req);
@@ -46,6 +48,8 @@ schoolOnboardService = async (req, res, next) => {
                         permissionId: getpermission.id
                     });
                 }
+                
+                admissionListSeed(school.id)
 
                 let saltResult = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
                 let hashedPwd = await bcrypt.hash(data.adminPwd, saltResult);
