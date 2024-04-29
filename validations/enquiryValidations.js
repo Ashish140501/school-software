@@ -30,6 +30,16 @@ const enquiryCreateValidation = {
         trim: true,
         escape: true,
     },
+    lastName: {
+        exists: {
+            errorMessage: "last name is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "last name cannot be empty" },
+        isString: { errorMessage: "last name should be string" },
+        trim: true,
+        escape: true,
+    },
     parentName: {
         exists: {
             errorMessage: "parent name is required",
@@ -97,12 +107,6 @@ const enquiryCreateValidation = {
     remarks: {
         optional: {},
         isString: { errorMessage: "remarks name should be string" },
-        trim: true,
-        escape: true,
-    },
-    parentConcern: {
-        optional: {},
-        isString: { errorMessage: "parentConcern should be string" },
         trim: true,
         escape: true,
     }
@@ -143,6 +147,16 @@ const enquiryUpdateValidation = {
         trim: true,
         escape: true,
     },
+    lastName: {
+        exists: {
+            errorMessage: "last name is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "last name cannot be empty" },
+        isString: { errorMessage: "last name should be string" },
+        trim: true,
+        escape: true,
+    },
     parentName: {
         exists: {
             errorMessage: "parent name is required",
@@ -213,12 +227,6 @@ const enquiryUpdateValidation = {
         trim: true,
         escape: true,
     },
-    parentConcern: {
-        optional: {},
-        isString: { errorMessage: "parentConcern should be string" },
-        trim: true,
-        escape: true,
-    }
 }
 
 const enquiryDeleteValidation = {
