@@ -18,8 +18,11 @@ const {
     classGetService,
     classUpdateService,
     classDeleteService,
-    sectionGetService
 } = require('../controllers/settings/classController')
+
+const {
+    sectionGetService
+} = require('../controllers/settings/sectionController')
 
 const {
     tableListCreate,
