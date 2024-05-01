@@ -71,7 +71,7 @@ classGetService = async (req, res, next) => {
         };
 
         const includeConditions = [
-            { model: Section, as: 'sectionList', required: true, attributes: ['id', 'section'] }
+            { model: Section, as: 'sectionList', required: true, attributes: ['id', 'section', 'status'], where: { schoolId:req.user.schoolId } }
         ];
 
         if (id !== undefined) {
@@ -86,10 +86,11 @@ classGetService = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: { exclude: ['schoolId','status','createdAt', 'updatedAt'] },
+            attributes: { exclude: ['schoolId','createdAt', 'updatedAt'] },
             where: whereCondition,
             include: includeConditions,
-            order: [[column || 'id', sort || 'DESC']],
+            distinct: true,
+            order: [[column || 'class', sort || 'ASC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
         };
@@ -130,6 +131,23 @@ classUpdateService = async (req, res, next) => {
                     }
                 }
             );
+
+
+            for( i = 0; i < data.sectionList.length; i++ ){
+                    
+                let [section, sectionCreated] = await Section.update(
+                    {
+                        section: data.sectionList[i].section,
+                        status: data.sectionList[i].status,
+                    },
+                    {
+                        where: {
+                            id: data.sectionList[i].id,
+                            schoolId: req.user.schoolId,
+                        }
+                    }
+                );
+            }
             if (results > 0) {
                 return res.status(200).json({
                     "code": 200,
