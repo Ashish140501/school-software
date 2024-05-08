@@ -16,6 +16,7 @@ enquiryCreateService = async (req, res, next) => {
                 schoolId: req.user.schoolId,
                 enquiryDate: data.enquiryDate,
                 name: data.name,
+                lastName: data.lastName,
                 parentName: data.parentName,
                 contactNo: data.contactNo,
                 class: data.class,
@@ -24,7 +25,6 @@ enquiryCreateService = async (req, res, next) => {
                 district: data.district,
                 followUpDate: data.followUpDate,
                 remarks: data.remarks,
-                parentConcern: data.parentConcern,
                 status: 1,
             });
             
@@ -89,6 +89,7 @@ enquiryGetService = async (req, res, next) => {
 
             whereCondition[Op.or] = [
                 sequelize.where(sequelize.col('name'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('lastName'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('parentName'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('contactNo'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('class'), { [Op.iLike]: `%${searchString}%` }),
@@ -96,7 +97,6 @@ enquiryGetService = async (req, res, next) => {
                 sequelize.where(sequelize.col('villageOrCity'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('district'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('remarks'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('parentConcern'), { [Op.iLike]: `%${searchString}%` }),
             ];
         }
 
@@ -104,6 +104,7 @@ enquiryGetService = async (req, res, next) => {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
             where: whereCondition,
             // include: includeConditions,
+            distinct: true,
             order: [[column || 'followUpDate', sort || 'ASC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
@@ -137,6 +138,7 @@ enquiryUpdateService = async (req, res, next) => {
                 {
                     enquiryDate: data.enquiryDate,
                     name: data.name,
+                    lastName: data.lastName,
                     parentName: data.parentName,
                     contactNo: data.contactNo,
                     class: data.class,
@@ -145,7 +147,6 @@ enquiryUpdateService = async (req, res, next) => {
                     district: data.district,
                     followUpDate: data.followUpDate,
                     remarks: data.remarks,
-                    parentConcern: data.parentConcern,
                     status: data.status,
                 },
                 {

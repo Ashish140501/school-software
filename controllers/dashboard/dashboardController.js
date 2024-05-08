@@ -9,48 +9,26 @@ const { sequelize, Enquiry, Village, District} = require('../../models')
 
 enquiryCount = async (req, res, next) => {
     try {
-        let { followUpDate } = req.query
-
-        let todayDate = moment(followUpDate)
-        let tomorrowDate = moment(followUpDate).add(1,'days')
 
         const todayCount = await Enquiry.count({
-            where : {
-                followUpDate : todayDate
+            where: {
+                followUpDate: {
+                    [Op.lte]: moment().format('YYYY-MM-DD')
+                }
             }
         });
 
-        const tomorrowCount = await Enquiry.count({
-            where : {
-                followUpDate : tomorrowDate
+        return res.status(200).json({
+            code: 200,
+            message: "dashboard data",
+            data: { 
+                followUps : {
+                    date: moment().format('DD-MM-YYYY'),
+                    count: todayCount
+                }
             }
         });
-
-        if(todayCount > 0){
-            return res.status(200).json({
-                code: 200,
-                message: "dashboard data",
-                data: { 
-                    followUps : {
-                        date: moment(todayDate).format('YYYY-MM-DD'),
-                        count: todayCount
-                    }
-                }
-            });
-        }
-        else{
-            return res.status(200).json({
-                code: 200,
-                message: "dashboard data",
-                data: { 
-                    followUps : {
-                        date: moment(tomorrowDate).format('YYYY-MM-DD'),
-                        count: tomorrowCount
-                    }
-                }
-            });
-        }
-        console.log(results)
+        
 
     } catch (error) {
         console.error(error);
