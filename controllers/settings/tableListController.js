@@ -102,7 +102,6 @@ tableListGet = async (req, res, next) => {
         const queryOptions = {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
             where: whereCondition,
-            distinct: true,
             order: [[column || 'id', sort || 'ASC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,

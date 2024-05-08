@@ -4,20 +4,15 @@ const { Sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, Student, Family, Class, Section } = require('../../models')
+const { sequelize, Student, Family } = require('../../models')
 
 
 studentCreateService = async (req, res, next) => {
     try {
-        let result = validationResult(req);
-        if (result.isEmpty()) {
-            let data = matchedData(req);
-            console.log('file')
-            console.log(req.file)
-            console.log('files')
-            console.log(req.files)
-            console.log('req')
-            // console.log(req)
+        // let result = validationResult(req);
+        // if (result.isEmpty()) {
+        //     let data = matchedData(req);
+        let data = req.body;
             let results = await Student.create({
                 schoolId: req.user.schoolId,
                 session: data.session,
@@ -26,44 +21,41 @@ studentCreateService = async (req, res, next) => {
                 rollNo: data.rollNo,
                 firstName: data.firstName,
                 lastName: data.lastName,
-                contactNo: data.contactNo,
-                fatherName: data.fatherName,
                 classId: data.classId,
                 sectionId: data.sectionId,
-                studentType: data.studentType,
-                staffNo: data.staffNo,
-                rte: data.rte,
-                rteApplicationNo: data.rteApplicationNo,
-                availingTransport: data.availingTransport,
-                transport: data.transport,
+                fatherName: data.fatherName,
+                contactNo: data.contactNo,
                 gender: data.gender,
                 DOB: data.DOB,
-                age: data.age,
+                bloodGroup: data.bloodGroup,
                 height: data.height,
                 weight: data.weight,
-                bloodGroup: data.bloodGroup,
-                caste: data.caste,
-                religion: data.religion,
-                nationality: data.nationality,
                 aadharNo: data.aadharNo,
+                transport: data.transport,
+                religion: data.religion,
+                studentType: data.studentType,
+                caste: data.caste,
+                nationality: data.nationality,
                 registrationNo: data.registrationNo,
                 crnNo: data.crnNo,
+                rte: data.rte,
+                rteApplicationNo: data.rteApplicationNo,
                 udiseNo: data.udiseNo,
-                familyId: data.familyId,
-                schoolName: data.schoolName,
-                previousClass: data.previousClass,
-                passYear: data.passYear,
-                obtMarks: data.obtMarks,
-                percentage: data.percentage,
                 studentPhoto: data.studentPhoto,
                 casteCertificate: data.casteCertificate,
                 aadharCard: data.aadharCard,
                 birthCertificate: data.birthCertificate,
                 transferCertificate: data.transferCertificate,
+                previousClass: data.previousClass,
+                passYear: data.passYear,
+                obtMarks: data.obtMarks,
+                age: data.age,
+                schoolName: data.schoolName,
                 studentId: data.studentId,
+                familyId: data.familyId,
                 status: 1,
             });
-
+            
             if (results) {
                 let familyCreate = await Family.create({
                     schoolId: req.user.schoolId,
@@ -73,7 +65,6 @@ studentCreateService = async (req, res, next) => {
                     IFSCCode: data.IFSCCode,
                     accountNo: data.accountNo,
                     panNo: data.panNo,
-                    // uploadPanCard:data.uploadPanCard,
                     fatherName: data.fatherName,
                     fatherQualification: data.fatherQualification,
                     fatherOccupation: data.fatherOccupation,
@@ -87,12 +78,10 @@ studentCreateService = async (req, res, next) => {
                     motherQualification: data.motherQualification,
                     motherOccupation: data.motherOccupation,
                     motherIncome: data.motherIncome,
-                    motherAadhardCard: data.motherAadhardCard,
+                    MotherAadhardCard: data.MotherAadhardCard,
                     motherPhoto: data.motherPhoto,
                     motherMobileNo: data.motherMobileNo,
                     motherEmail: data.motherEmail,
-                    fatherAadharNo: data.fatherAadharNo,
-                    motherAadharNo: data.motherAadharNo 
                 });
 
                 return res.status(200).json({
@@ -100,14 +89,14 @@ studentCreateService = async (req, res, next) => {
                     "message": "enquiry created successfully",
                     "data": []
                 });
-            }
-            else {
-                return res.status(400).json({
-                    "code": 400,
-                    "message": "enquiry cannot be created",
-                    "data": []
-                });
-            }
+            // }
+            // else {
+            //     return res.status(400).json({
+            //         "code": 400,
+            //         "message": "enquiry cannot be created",
+            //         "data": []
+            //     });
+            // }
         }
         else {
             return res.status(422).json({
@@ -123,25 +112,13 @@ studentCreateService = async (req, res, next) => {
     }
 };
 
-studentGetService = async (req, res, next) => {
+enquiryGetService = async (req, res, next) => {
     try {
-        let { id, pno, limit, column, sort, searchString, fromDate, toDate, admissionList } = req.query
+        let { id, column, pno, limit, sort, searchString, fromDate, toDate } = req.query
 
         const whereCondition = {
             schoolId: req.user.schoolId,
         };
-
-        const includeConditions = [
-            { model: Section, required: true, attributes: [], where: { schoolId:req.user.schoolId } },
-            { model: Class, required: true, attributes: [], where: { schoolId:req.user.schoolId } },
-        ];
-
-        if (admissionList) {
-            const startOfYear = moment().startOf('year');
-            const endOfYear = moment().endOf('year');
-
-            whereCondition.admissionDate = { [Op.between]: [startOfYear, endOfYear] }
-        }
 
         if (id !== undefined) {
             whereCondition.id = id;
@@ -167,25 +144,19 @@ studentGetService = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: {
-                exclude: ['createdAt', 'updatedAt'],
-                include: [
-                    [sequelize.col('Class.class'), 'className'],
-                    [sequelize.col('Section.section'), 'sectionName']
-                ]
-            },
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
             where: whereCondition,
-            include: includeConditions,
-            order: [[column || 'id', sort || 'ASC']],
+            // include: includeConditions,
+            order: [[column || 'followUpDate', sort || 'ASC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
         };
 
-        const results = await Student.findAndCountAll(queryOptions);
+        const results = await Enquiry.findAndCountAll(queryOptions);
 
         return res.status(200).json({
             code: 200,
-            message: results.count > 0 ? "students exist" : "No students found",
+            message: results.count > 0 ? "enquiries exist" : "No enquiries found",
             data: {
                 currentPno: pno ? parseInt(pno) : 1,
                 totalPages: limit ? Math.ceil(results.count / parseInt(limit)) : 1,
@@ -194,8 +165,8 @@ studentGetService = async (req, res, next) => {
                 rows: results.rows
             }
         });
-    } 
-    catch (error) {
+    } catch (error) {
+        console.error(error);
         next(createError(500, "Something went wrong: " + error.message));
     }
 };
@@ -286,6 +257,5 @@ enquiryDeleteService = async (req, res, next) => {
 };
 
 module.exports = {
-    studentCreateService,
-    studentGetService
+    studentCreateService
 }

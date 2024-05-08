@@ -26,9 +26,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    lastName: {
-      type: DataTypes.STRING,
-    },
     parentName :{
       type: DataTypes.STRING,
       allowNull: false
@@ -54,6 +51,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
     },
     remarks: {
+      type: DataTypes.TEXT,
+    },
+    parentConcern: {
       type: DataTypes.TEXT,
     },
     status: {

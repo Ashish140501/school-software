@@ -71,7 +71,7 @@ classGetService = async (req, res, next) => {
         };
 
         const includeConditions = [
-            { model: Section, as: 'sectionList', required: true, attributes: ['id', 'section', 'status'], where: { schoolId:req.user.schoolId } }
+            { model: Section, as: 'sectionList', required: true, attributes: ['section'] }
         ];
 
         if (id !== undefined) {
@@ -86,11 +86,10 @@ classGetService = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: { exclude: ['schoolId','createdAt', 'updatedAt'] },
+            attributes: { exclude: ['schoolId','status','createdAt', 'updatedAt'] },
             where: whereCondition,
             include: includeConditions,
-            distinct: true,
-            order: [[column || 'class', sort || 'ASC']],
+            order: [[column || 'id', sort || 'DESC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
         };
@@ -131,23 +130,6 @@ classUpdateService = async (req, res, next) => {
                     }
                 }
             );
-
-
-            for( i = 0; i < data.sectionList.length; i++ ){
-                    
-                let [section, sectionCreated] = await Section.update(
-                    {
-                        section: data.sectionList[i].section,
-                        status: data.sectionList[i].status,
-                    },
-                    {
-                        where: {
-                            id: data.sectionList[i].id,
-                            schoolId: req.user.schoolId,
-                        }
-                    }
-                );
-            }
             if (results > 0) {
                 return res.status(200).json({
                     "code": 200,
@@ -195,9 +177,64 @@ classDeleteService = async (req, res, next) => {
     }
 }
 
+sectionGetService = async (req, res, next) => {
+    try {
+        let { id, classId, column, pno, limit, sort, searchString } = req.query
+
+        const whereCondition = {
+            schoolId: req.user.schoolId,
+        };
+
+        // const includeConditions = [
+        //     { model: Class, required: true, attributes: ['section'] }
+        // ];
+
+        if (id !== undefined) {
+            whereCondition.id = id; 
+        }
+
+        if (classId !== undefined) {
+            whereCondition.classId = classId; 
+        }
+
+        if (searchString !== undefined && searchString !== null) {
+            whereCondition[Op.or] = [
+                sequelize.where(sequelize.col('section'), { [Op.iLike]: `%${searchString}%` }),
+            ];
+        }
+
+        const queryOptions = {
+            attributes: { exclude: ['schoolId', 'status', 'createdAt', 'updatedAt'] },
+            where: whereCondition,
+            // include: includeConditions,
+            order: [[column || 'id', sort || 'DESC']],
+            limit: limit ? parseInt(limit) : undefined,
+            offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
+        };
+
+        const results = await Section.findAndCountAll(queryOptions);
+
+        return res.status(200).json({
+            code: 200,
+            message: results.count > 0 ? "Section exist" : "No Section found",
+            data: {
+                currentPno: pno ? parseInt(pno) : 1,
+                totalPages: limit ? Math.ceil(results.count / parseInt(limit)) : 1,
+                totalRecords: results.count,
+                totalPageCount: results.rows.length,
+                rows: results.rows
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        next(createError(500, "Something went wrong: " + error.message));
+    }
+};
+
 module.exports = {
     classCreateService,
     classGetService,
     classUpdateService,
     classDeleteService,
+    sectionGetService
 }
