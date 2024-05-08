@@ -86,6 +86,12 @@ module.exports = (sequelize, DataTypes) => {
     motherEmail: {
       type: DataTypes.STRING
     },
+    fatherAadharNo: {
+      type: DataTypes.STRING
+    },
+    motherAadharNo: {
+      type: DataTypes.STRING
+    },
   }, {
     sequelize,
     modelName: 'Family',

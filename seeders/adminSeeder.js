@@ -31,11 +31,6 @@ admissionListSeed = async (schoolId) => {
                         "default": "true"
                     },
                     {
-                        "field": "Roll No.",
-                        "status": "1",
-                        "default": "true"
-                    },
-                    {
                         "field": "First Name",
                         "status": "1",
                         "default": "true"
@@ -44,6 +39,16 @@ admissionListSeed = async (schoolId) => {
                         "field": "Last Name",
                         "status": "1",
                         "default": "false"
+                    },
+                    {
+                        "field": "Contact no.",
+                        "status": "1",
+                        "default": "true"
+                    },
+                    {
+                        "field": "Father Name",
+                        "status": "1",
+                        "default": "true"
                     },
                     {
                         "field": "Class",
@@ -56,15 +61,35 @@ admissionListSeed = async (schoolId) => {
                         "default": "true"
                     },
                     {
-                        "field": "Father Name",
+                        "field": "Student Type",
                         "status": "1",
-                        "default": "true"
+                        "default": "false"
                     },
                     {
-                        "field": "Contact no.",
+                        "field": "Staff No",
                         "status": "1",
-                        "default": "true"
-                    }
+                        "default": "false"
+                    },
+                    {
+                        "field": "RTE",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "RTE application no.",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Availing Transport",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Transport",
+                        "status": "1",
+                        "default": "false"
+                    },
                 ]
             },
             {
@@ -82,7 +107,7 @@ admissionListSeed = async (schoolId) => {
                         "default": "false"
                     },
                     {
-                        "field": "Blood group",
+                        "field": "Age",
                         "status": "1",
                         "default": "false"
                     },
@@ -97,22 +122,7 @@ admissionListSeed = async (schoolId) => {
                         "default": "false"
                     },
                     {
-                        "field": "Adhar no.",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "Transport",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "Religion",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "Student Type",
+                        "field": "Blood group",
                         "status": "1",
                         "default": "false"
                     },
@@ -122,27 +132,22 @@ admissionListSeed = async (schoolId) => {
                         "default": "false"
                     },
                     {
+                        "field": "Religion",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
                         "field": "Nationality",
                         "status": "1",
                         "default": "false"
                     },
                     {
+                        "field": "Adhar no.",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
                         "field": "Registration No.",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "CRN No.",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "RTE",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "RTE application no.",
                         "status": "1",
                         "default": "false"
                     },
@@ -157,36 +162,10 @@ admissionListSeed = async (schoolId) => {
                         "default": "false"
                     },
                     {
-                        "field": "Student Photo",
+                        "field": "previous School name",
                         "status": "1",
                         "default": "false"
                     },
-                    {
-                        "field": "Caste certificate",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "Adhar card",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "birth certificate",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "transfer certificate",
-                        "status": "1",
-                        "default": "false"
-                    }
-                ]
-            },
-            {
-                "schoolId": schoolId,
-                "tableName": "Previous Qualifications Details",
-                "list": [
                     {
                         "field": "Previous class",
                         "status": "1",
@@ -203,42 +182,91 @@ admissionListSeed = async (schoolId) => {
                         "default": "false"
                     },
                     {
-                        "field": "% age",
+                        "field": "percentage",
                         "status": "1",
                         "default": "false"
                     },
-                    {
-                        "field": "Obt. Marks",
-                        "status": "1",
-                        "default": "false"
-                    },
-                    {
-                        "field": "School name",
-                        "status": "1",
-                        "default": "false"
-                    }
                 ]
             },
             {
                 "schoolId": schoolId,
-                "tableName": "Govt Portal ID",
+                "tableName": "Family Details",
                 "list": [
                     {
-                        "field": "Student ID",
-                        "status": "1",
-                        "default": "false"
+                        "field": "Father name",
+                        "default":"false",
+                        "status": 1
                     },
                     {
-                        "field": "Family ID",
-                        "status": "1",
-                        "default": "false"
-                    }
-                ]
-            },
-            {
-                "schoolId": schoolId,
-                "tableName": "Bank Account Details",
-                "list": [
+                        "field": "Father Qualification",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Father Occupation",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Address",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Father Mobile no",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Father Email",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Father Income",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Father Aadhar Card No",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother name",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Qualification",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Occupation",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Mobile no",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Email",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Income",
+                        "default":"false",
+                        "status": 1
+                    },
+                    {
+                        "field": "Mother Aadhard Card No",
+                        "default":"false",
+                        "status": 1
+                    },
                     {
                         "field": "Bank Name",
                         "status": "1",
@@ -263,105 +291,73 @@ admissionListSeed = async (schoolId) => {
                         "field": "PAN No.",
                         "status": "1",
                         "default": "false"
+                    },
+                    {
+                        "field": "Upload PAN Card",
+                        "status": "1",
+                        "default": "false"
                     }
                 ]
             },
             {
                 "schoolId": schoolId,
-                "tableName": "Family Details",
+                "tableName": "Uploads",
                 "list": [
                     {
-                        "field": "Father name",
+                        "field": "Student Photo",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Adhar card",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Caste Certificate",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Birth Certificate",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Transfer Certificate",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Character Certificate",
+                        "status": "1",
+                        "default": "false"
+                    },
+                    {
+                        "field": "Father Photo",
                         "default":"false",
                         "status": 1
                     },
                     {
-                        "field": "father Qualification",
+                        "field": "Father Aadhar Card",
                         "default":"false",
                         "status": 1
                     },
                     {
-                        "field": "father Occupation",
+                        "field": "Mother Photo",
                         "default":"false",
                         "status": 1
                     },
                     {
-                        "field": "father Income",
+                        "field": "Mother Aadhar Card",
                         "default":"false",
                         "status": 1
                     },
-                    {
-                        "field": "Father adhar card",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "father Photo",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "Address",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "father Mobile no",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "father Email",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "Mother's name",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Qualification",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Occupation",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Income",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "Mother adhard",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Photo",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Mobile no",
-                        "default":"false",
-                        "status": 1
-                    },
-                    {
-                        "field": "mother Email",
-                        "default":"false",
-                        "status": 1
-                    }
                 ]
             },
         ]
 
         let results = await TableList.bulkCreate(admissionList)
-
-        console.log("admission list created")
 
     }
     catch (err) {
