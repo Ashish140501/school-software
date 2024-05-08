@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'classId',
         as: 'classList'
       });
+      Section.hasMany(models.Student, {
+        foreignKey: 'sectionId',
+      });
     }
   }
   Section.init({

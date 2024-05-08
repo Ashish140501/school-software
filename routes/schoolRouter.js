@@ -3,7 +3,11 @@ const express = require('express');
 const { body, query, checkSchema, check } = require('express-validator');
 
 const router = express.Router();
+const multer = require('multer'); 
+const { S3Client } = require('@aws-sdk/client-s3');
+const multerS3 = require('multer-s3');
 
+const uploadImages = multer({ dest: '../utils/upload' })
 
 //----controllers----//
 const { 
@@ -42,8 +46,22 @@ const {
 } = require('../controllers/dashboard/dashboardController')
 
 const {
-    studentCreateService
+    studentCreateService,
+    studentGetService
 } = require('../controllers/student/studentController')
+
+const {
+    transportCreate,
+    transportUpdate,
+    transportGet
+} = require('../controllers/settings/transportController')
+
+
+const {
+    studentTypeCreate,
+    studentTypeUpdate,
+    studentTypeGet
+} = require('../controllers/settings/studentTypeController')
 
 
 //----validations----//
@@ -63,30 +81,44 @@ const {
     tableListUpdateValidation
 } = require('../validations/tableListValidations')
 
-// let s3 = new S3Client({
-//     region: 'ap-south-1',
-//     credentials: {
-//         accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-//         secretAccessKey: process.env.AWS_S3_SECRET_KEY,
-//     },
-//     sslEnabled: false,
-//     s3ForcePathStyle: true,
-//     signatureVersion: 'v4',
-// });
+const {
+    studentCreateValidation
+} = require('../validations/studentValidations')
 
-// const upload = multer({
-//     storage: multerS3({
-//         s3: s3,
-//         bucket: process.env.AWS_S3_BUCKET_NAME,
-//         metadata: function (req, file, cb) {
-//             // console.log("filename");
-//             cb(null, { fieldName: file.fieldname });
-//         },
-//         key: function (req, file, cb) {
-//             cb(null, Date.now().toString() + file.originalname)
-//         }
-//     })
-// });
+const {
+    transportCreateValidation,
+    transportUpdateValidation
+} = require('../validations/transportValidations')
+
+const {
+    studentTypeCreateValidation,
+    studentTypeUpdateValidation
+} = require('../validations/studentTypeValidations')
+
+let s3 = new S3Client({
+    region: 'us-east-1',
+    credentials: {
+        accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+    },
+    sslEnabled: false,
+    s3ForcePathStyle: true,
+    signatureVersion: 'v4',
+});
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.AWS_S3_BUCKET_NAME,
+        metadata: function (req, file, cb) {
+            // console.log("filename");
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString() + file.originalname)
+        }
+    })
+})
 
 //--enquiry-routes--//
 router.post('/enquiry/create', checkSchema(enquiryCreateValidation), (req, res, next) => {
@@ -123,10 +155,28 @@ router.get('/section/get', (req, res, next) => {
     sectionGetService(req, res, next);
 });
 
+const photos = [
+    { name: 'studentPhoto', maxCount: 1 }, 
+    { name: 'casteCertificate', maxCount: 1 }, 
+    { name: 'birthCertificate', maxCount: 1 },
+    { name: 'aadharCard', maxCount: 1 },
+    { name: 'transferCertificate', maxCount: 1 },
+    { name: 'fatherAadharCard', maxCount: 1 },
+    { name: 'fatherPhoto', maxCount: 1 },
+    { name: 'MotherAadhardCard', maxCount: 1 },
+    { name: 'motherPhoto', maxCount: 1 },
+    { name: 'uploadPanCard', maxCount: 1 },
+    { name: 'characterCertificate', maxCount: 1 },
+]
+
 
 //--student-routes--//
-router.post('/student/create', (req, res, next) => {
+router.post('/student/create', upload.fields('photos'), checkSchema(studentCreateValidation), (req, res, next) => {
     studentCreateService(req, res, next);
+});
+
+router.get('/student/get', (req, res, next) => {
+    studentGetService(req, res, next);
 });
 
 
@@ -165,6 +215,33 @@ router.post('/table-list/update', checkSchema(tableListUpdateValidation), (req, 
 
 router.get('/table-list/get', (req, res, next) => {
     tableListGet(req, res, next);
+});
+
+
+//--transport-apis--//
+router.post('/transport/create', checkSchema(transportCreateValidation), (req, res, next) => {
+    transportCreate(req, res, next);
+});
+
+router.post('/transport/update', checkSchema(transportUpdateValidation), (req, res, next) => {
+    transportUpdate(req, res, next);
+});
+
+router.get('/transport/get', (req, res, next) => {
+    transportGet(req, res, next);
+});
+
+//--student-type-apis--//
+router.post('/student-type/create', checkSchema(studentTypeCreateValidation), (req, res, next) => {
+    studentTypeCreate(req, res, next);
+});
+
+router.post('/student-type/update', checkSchema(studentTypeUpdateValidation), (req, res, next) => {
+    studentTypeUpdate(req, res, next);
+});
+
+router.get('/student-type/get', (req, res, next) => {
+    studentTypeGet(req, res, next);
 });
 
 

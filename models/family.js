@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
     motherIncome: {
       type: DataTypes.STRING
     },
-    MotherAadhardCard: {
+    motherAadhardCard: {
       type: DataTypes.STRING
     },
     motherPhoto: {
@@ -84,6 +84,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     motherEmail: {
+      type: DataTypes.STRING
+    },
+    fatherAadharNo: {
+      type: DataTypes.STRING
+    },
+    motherAadharNo: {
       type: DataTypes.STRING
     },
   }, {
