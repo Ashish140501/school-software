@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const path = require('path');
 const bcrypt = require('bcrypt');
-const { check, validationResult } = require('express-validator');
+const { check, validationResult, body } = require('express-validator');
 
 const{ User, School } = require('../models')
 
@@ -185,7 +185,32 @@ const schoolOnBoardValidation = {
     },
 };
 
+
+const schoolEditValidation = [
+    // Validation rules for name
+    check('name').optional().isString().withMessage("Name should be string").trim().escape(),
+
+    // Validation rules for contactNo
+    check('contactNo').optional().isNumeric().withMessage("Contact no should be numeric").isInt().withMessage("Contact no should be integer").trim().escape(),
+
+    // Validation rules for alternateContactNo
+    check('alternateContactNo').optional().isNumeric().withMessage("Contact no should be numeric").isInt().withMessage("Contact no should be integer").trim().escape(),
+
+    // Validation rules for address
+    check('address').optional().notEmpty().withMessage("School address cannot be empty").isString().withMessage("School address should be string").trim().escape(),
+
+    // Validation rules for city
+    check('city').optional().notEmpty().withMessage("City name cannot be empty").isString().withMessage("City name should be string").trim().escape(),
+
+    // Validation rules for state
+    check('state').optional().notEmpty().withMessage("State name cannot be empty").isString().withMessage("State name should be string").trim().escape(),
+
+    // Validation rules for website
+    check('website').optional().isString().withMessage("Website URL should be string").trim().escape(),
+];
+
 module.exports = {
     schoolOnBoardValidation,
-    schoolLoginValidation
+    schoolLoginValidation,
+    schoolEditValidation
 }
