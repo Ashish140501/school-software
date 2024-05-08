@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Student.belongsTo(models.Section, {
+        foreignKey: 'sectionId'
+      });
+      Student.belongsTo(models.Class, {
+        foreignKey: 'classId'
+      });
     }
   }
   Student.init({
@@ -134,6 +140,18 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.INTEGER
     },
+    staffNo: {
+      type: DataTypes.STRING
+    },
+    availingTransport: {
+      type: DataTypes.STRING
+    },
+    percentage: {
+      type: DataTypes.STRING
+    },
+    characterCertificate: {
+      type: DataTypes.STRING
+    }
   }, {
     sequelize,
     modelName: 'Student',

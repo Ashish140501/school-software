@@ -3,195 +3,401 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { check, validationResult } = require('express-validator');
 
-const { User, School } = require('../models')
+const { User, School } = require('../models');
+const { isString } = require('util');
+const { options } = require('../routes/adminRouter');
 
 const studentCreateValidation = {
     session: {
-        type: DataTypes.STRING
+        exists: {
+            errorMessage: "session is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "session cannot be empty" },
+        isString: { errorMessage: "session should be string" },
+        trim: true,
+        escape: true,
     },
     admissionDate: {
-        type: DataTypes.DATEONLY
+        exists: {
+            errorMessage: "admissionDate is required",
+            options: { checkFalsy: true }
+        },
+        notEmpty: { errorMessage: "admissionDate cannot be empty" },
+        isString: { errorMessage: "admissionDate should be string" },
+        trim: true,
+        isISO8601: {
+            errorMessage: "admissionDate format not supported"
+        },
+        toDate: true,
+        escape: true,
     },
     admissionNo: {
-        type: DataTypes.STRING
-    },
-    rollNo: {
-        type: DataTypes.STRING
+        exists: {
+            errorMessage: "admissionNo is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "admissionNo cannot be empty" },
+        isString: { errorMessage: "admissionNo should be string" },
+        trim: true,
+        escape: true,
     },
     firstName: {
-        type: DataTypes.STRING
+        exists: {
+            errorMessage: "firstName is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "firstName cannot be empty" },
+        isString: { errorMessage: "firstName should be string" },
+        trim: true,
+        escape: true,
     },
     lastName: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "lastName should be string" },
+        trim: true,
+        escape: true,
     },
     classId: {
-        optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        exists:{
+            errorMessage: "classId is required",
+            options:{checkFalsy: true},
+        },
+        isNumeric: { errorMessage: "classId should be in numeric" },
+        isInt:{ errorMessage: "classId should be integer" },
         trim: true,
         escape: true,
     },
     sectionId: {
-        optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        exists:{
+            errorMessage: "sectionId is required",
+            options:{checkFalsy: true},
+        },
+        isNumeric: { errorMessage: "sectionId should be in numeric" },
+        isInt:{ errorMessage: "sectionId should be integer" },
         trim: true,
         escape: true,
     },
     fatherName: {
-        type: DataTypes.STRING
+        exists: {
+            errorMessage: "fatherName is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "fatherName cannot be empty" },
+        isString: { errorMessage: "fatherName should be string" },
+        trim: true,
+        escape: true,
     },
     contactNo: {
-        type: DataTypes.STRING
+        exists:{
+            errorMessage: "contact number is required",
+            options:{checkFalsy: true},
+        },
+        notEmpty: { errorMessage: "contact number cannot be empty" },
+        isNumeric: { errorMessage: "contact no should be in numeric" },
+        isInt:{ errorMessage: "contact no should be integer" },
+        isLength: {
+            options: { min: 10, max: 10 },
+            errorMessage: "customer number should be 10 Digits",
+        },
+        trim: true,
+        escape: true,
     },
     gender: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "gender should be string" },
+        trim: true,
+        escape: true,
     },
     DOB: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "DOB should be string" },
+        trim: true,
+        escape: true,
     },
     bloodGroup: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "blood group should be string" },
+        trim: true,
+        escape: true,
     },
     height: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "height should be string" },
+        trim: true,
+        escape: true,
     },
     weight: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "weight should be string" },
+        trim: true,
+        escape: true,
     },
     aadharNo: {
-        type: DataTypes.STRING
+        optional: {},
+        trim: true,
+        escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                console.log(value)
+                if (value == null || value == '') {
+                    return true
+                }
+                else{
+                    if(value.length !== 12){
+                        throw new Error('aadharNo should have 12 digits')
+                    }
+                }
+            },
+        }
     },
     transport: {
-        type: DataTypes.STRING
+        optional: {},
+        trim: true,
+        escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                console.log(value)
+                if (value == null || value == '') {
+                    return true
+                }
+                else{
+                    if(typeof(value) !== 'number'){
+                        throw new Error('transport should have integer')
+                    }
+                }
+            },
+        }
     },
     religion: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "religion should be string" },
+        trim: true,
+        escape: true,
     },
     studentType: {
-        type: DataTypes.STRING
+        optional: {},
+        trim: true,
+        escape: true,
     },
     caste: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "caste should be string" },
+        trim: true,
+        escape: true,
     },
     nationality: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "nationality should be string" },
+        trim: true,
+        escape: true,
     },
     registrationNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "registration No should be string" },
+        trim: true,
+        escape: true,
     },
     crnNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "crnNo should be string" },
+        trim: true,
+        escape: true,
     },
     rte: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: {
+            options: [['Yes', 'No']], 
+            errorMessage: "rte should be string" 
+        },
+        trim: true,
+        escape: true,
     },
     rteApplicationNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "rteApplicationNo should be string" },
+        trim: true,
+        escape: true,
     },
     udiseNo: {
-        type: DataTypes.STRING
-    },
-    studentPhoto: {
-        type: DataTypes.STRING
-    },
-    casteCertificate: {
-        type: DataTypes.STRING
-    },
-    aadharCard: {
-        type: DataTypes.STRING
-    },
-    birthCertificate: {
-        type: DataTypes.STRING
-    },
-    transferCertificate: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "udiseNo should be string" },
+        trim: true,
+        escape: true,
     },
     previousClass: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "previous class should be string" },
+        trim: true,
+        escape: true,
     },
     passYear: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "pass year should be string" },
+        trim: true,
+        escape: true,
     },
     obtMarks: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "obtMarks should be string" },
+        trim: true,
+        escape: true,
     },
     age: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "age should be string" },
+        trim: true,
+        escape: true,
     },
     schoolName: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "school name should be string" },
+        trim: true,
+        escape: true,
     },
     studentId: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "student id should be string" },
+        trim: true,
+        escape: true,
     },
     familyId: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "family id should be string" },
+        trim: true,
+        escape: true,
+    },
+    staffNo: {
+        optional: {},
+        isString: { errorMessage: "staff no should be string" },
+        trim: true,
+        escape: true,
+    },
+    availingTransport: {
+        optional: {},
+        isString: {
+            options: [['Yes', 'No']], 
+            errorMessage: "availingTransport should be string" 
+        },
+        trim: true,
+        escape: true,
+    },
+    percentage: {
+        optional: {},
+        isString: { errorMessage: "percentage should be string" },
+        trim: true,
+        escape: true,
     },
     bankName: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "bank name should be string" },
+        trim: true,
+        escape: true,
     },
     bankBranch: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "bank branch should be string" },
+        trim: true,
+        escape: true,
     },
     IFSCCode: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "IFSC code should be string" },
+        trim: true,
+        escape: true,
     },
     accountNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "accountNo should be string" },
+        trim: true,
+        escape: true,
     },
     panNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "pan no should be string" },
+        trim: true,
+        escape: true,
     },
     fatherName: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father name should be string" },
+        trim: true,
+        escape: true,
     },
     fatherQualification: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father qualification should be string" },
+        trim: true,
+        escape: true,
     },
     fatherOccupation: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father occupation should be string" },
+        trim: true,
+        escape: true,
     },
     fatherIncome: {
-        type: DataTypes.STRING
-    },
-    fatherAadharCard: {
-        type: DataTypes.STRING
-    },
-    fatherPhoto: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father income should be string" },
+        trim: true,
+        escape: true,
     },
     Address: {
-        type: DataTypes.TEXT
+        optional: {},
+        isString: { errorMessage: "Address should be string" },
+        trim: true,
+        escape: true,
     },
     fatherMobileNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father mobile no should be string" },
+        trim: true,
+        escape: true,
     },
     fatherEmail: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "father email should be string" },
+        trim: true,
+        escape: true,
     },
     motherName: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother name should be string" },
+        trim: true,
+        escape: true,
     },
     motherQualification: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother qualification should be string" },
+        trim: true,
+        escape: true,
     },
     motherOccupation: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother occupation should be string" },
+        trim: true,
+        escape: true,
     },
     motherIncome: {
-        type: DataTypes.STRING
-    },
-    MotherAadhardCard: {
-        type: DataTypes.STRING
-    },
-    motherPhoto: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother income should be string" },
+        trim: true,
+        escape: true,
     },
     motherMobileNo: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother mobile no should be string" },
+        trim: true,
+        escape: true,
     },
     motherEmail: {
-        type: DataTypes.STRING
+        optional: {},
+        isString: { errorMessage: "mother email should be string" },
+        trim: true,
+        escape: true,
     },
+}
+
+module.exports = {
+    studentCreateValidation
 }

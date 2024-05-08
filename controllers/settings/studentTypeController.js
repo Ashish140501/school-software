@@ -1,34 +1,34 @@
 const createError = require('http-errors');
 const path = require('path');
-const { Sequelize, Op } = require('sequelize');
+const { sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, TableList, Class, Section } = require('../../models')
+const { StudentType } = require('../../models')
 
 
-tableListCreate = async (req, res, next) => {
+studentTypeCreate = async (req, res, next) => {
     try {
         let result = validationResult(req);
         if (result.isEmpty()) {
 
             let data = matchedData(req);
 
-            let results = await TableList.create({
+            let results = await StudentType.create({
                 schoolId: req.user.schoolId,
-                tableName: data.tableName,
-                list: data.list
+                studentType: data.studentType,
+                status: data.status,
             })
             return res.status(200).json({
                 "code": 200,
-                "message": "table list created",
+                "message": "student type created",
                 "data": []
             });
         }
         else {
             return res.status(422).json({
                 "code": 422,
-                "message": "class create cannot be processed",
+                "message": "student type is not added",
                 "data": result.array()
             });
         }
@@ -39,38 +39,37 @@ tableListCreate = async (req, res, next) => {
     }
 }
 
-tableListUpdate = async (req, res, next) => {
+studentTypeUpdate = async (req, res, next) => {
     try {
         let result = validationResult(req);
         if (result.isEmpty()) {
             console.log(req.body)
 
             let data = matchedData(req);
-            console.log(data.list)
 
-            for( i = 0; i < data.list.length; i++){
-                let results = await TableList.update(
-                    {
-                        list: data.list[i].list
+            let results = await StudentType.update(
+                {
+                    studentType: data.studentType,
+                    status: data.status
+                },
+                {
+                    where: {
+                        id: data.id,
+                        schoolId: req.user.schoolId
                     },
-                    {
-                        where: {
-                            id: data.list[i].id,
-                            schoolId: req.user.schoolId,
-                        },
-                    }
-                )
-            }
+                }
+            )
+
             return res.status(200).json({
                 "code": 200,
-                "message": "table list updated",
+                "message": "student type updated",
                 "data": []
             });
         }
         else {
             return res.status(422).json({
                 "code": 422,
-                "message": "class create cannot be processed",
+                "message": "studentType create cannot be processed",
                 "data": result.array()
             });
         }
@@ -81,7 +80,7 @@ tableListUpdate = async (req, res, next) => {
     }
 };
 
-tableListGet = async (req, res, next) => {
+studentTypeGet = async (req, res, next) => {
     try {
         let { id, column, pno, limit, sort, searchString } = req.query
 
@@ -95,7 +94,7 @@ tableListGet = async (req, res, next) => {
 
         if (searchString !== undefined && searchString !== null) {
             whereCondition[Op.or] = [
-                sequelize.where(sequelize.col('class'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('pickUp'), { [Op.iLike]: `%${searchString}%` }),
             ];
         }
 
@@ -108,11 +107,11 @@ tableListGet = async (req, res, next) => {
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,
         };
 
-        const results = await TableList.findAndCountAll(queryOptions);
+        const results = await StudentType.findAndCountAll(queryOptions);
 
         return res.status(200).json({
             code: 200,
-            message: results.count > 0 ? "Table List exist" : "No Table List found",
+            message: results.count > 0 ? "student type exist" : "student type List found",
             data: {
                 currentPno: pno ? parseInt(pno) : 1,
                 totalPages: limit ? Math.ceil(results.count / parseInt(limit)) : 1,
@@ -128,7 +127,7 @@ tableListGet = async (req, res, next) => {
 };
 
 module.exports = {
-    tableListCreate,
-    tableListUpdate,
-    tableListGet
+    studentTypeCreate,
+    studentTypeUpdate,
+    studentTypeGet
 }

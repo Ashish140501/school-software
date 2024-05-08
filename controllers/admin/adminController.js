@@ -6,6 +6,9 @@ const sequelize = require('sequelize');
 const { validationResult, matchedData } = require('express-validator');
 
 const { School, User, Role, Permission, RoleHasPermission } = require('../../models')
+const sendResetPasswordEmail = require('../../utils/mailer')
+
+const { admissionListSeed } = require('../../seeders/adminSeeder')
 
 schoolOnboardService = async (req, res, next) => {
     try {
@@ -26,6 +29,7 @@ schoolOnboardService = async (req, res, next) => {
                     state: data.state,
                     website: data.website,
                     status: 1,
+                    settings: 0
                 }
             });
 
@@ -46,6 +50,8 @@ schoolOnboardService = async (req, res, next) => {
                         permissionId: getpermission.id
                     });
                 }
+                
+                admissionListSeed(school.id)
 
                 let saltResult = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
                 let hashedPwd = await bcrypt.hash(data.adminPwd, saltResult);
@@ -235,7 +241,144 @@ schoolLoginService = async (req, res, next) => {
     }
 };
 
+
+
+schoolUpdateService = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // If there are validation errors, return them
+        return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+        const { id } = req.query
+        if(!id)  return res.status(400).json({ message: "Id is required" });
+        let { name, logo, banner, contactNo, alternateContactNo, address, city, state } = matchedData(req);
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (logo) updateFields.logo = logo;
+        if (banner) updateFields.banner = banner;
+        if (contactNo) updateFields.contactNo = contactNo;
+        if (alternateContactNo) updateFields.alternateContactNo = alternateContactNo;
+        if (address) updateFields.address = address;
+        if (city) updateFields.city = city;
+        if (state) updateFields.state = state;
+
+        const [result] = await School.update(updateFields, { where: { id: id } });
+
+        return res.status(200).json({
+            code: result > 0 ? 200 : 404,
+            message: result > 0 ? "School updated" : "School not found",
+        })
+    } catch (error) {
+        console.error(error);
+        next(createError(500, "Something went wrong: " + error.message));
+    }
+}
+
+
+
+
+
+
+
+
+
+schoolForgetPasswordService = async (req, res, next) => {
+    try {
+
+        // Validate request body
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+
+        // Extract email from request body
+        const { email } = req.body;
+
+        // Check if user with provided email exists
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(404).json({
+                code: 404,
+                message: 'User not found',
+                data: []
+            });
+        }
+
+        // Generate reset token
+        const resetToken = jwt.sign(
+            { userId: user.email },
+            process.env.JWT_SECRET || "123",
+            { expiresIn: '1h' }
+        );
+
+        // Send reset password email
+        const resetLink = await sendResetPasswordEmail(email, resetToken);
+
+        return res.status(200).json({
+            code: 200,
+            message: 'Reset password email sent',
+            data: {
+                'reset-link': resetLink
+            }
+        });
+
+
+    } catch (err) {
+        console.log(err);
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+}
+
+schoolResetPasswordService = async (req, res, next) => {
+    try {
+        const { newPwd } = req.body;
+        const { token } = req.query
+
+        console.log(token);
+
+        if (!token || !newPwd) {
+            throw new Error('Token and newPwd are required');
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "123");
+
+        if (!decoded.userId) {
+            throw new Error('Invalid token');
+        }
+
+        // email coded as userId
+        const email = decoded.userId;
+
+        if (!email || !newPwd) {
+            throw new Error('Email and newPwd are required');
+        }
+
+        const hashedPwd = await bcrypt.hash(newPwd, 10);
+        const user = await User.findOne({ where: { email: email } });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        user.pwd = hashedPwd;
+        await user.save();
+
+        res.status(200).json({
+            code: 200,
+            message: 'Password reset successfully',
+            data: []
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+}
+
 module.exports = {
     schoolOnboardService,
     schoolLoginService,
+    schoolUpdateService,
+    schoolForgetPasswordService,
+    schoolResetPasswordService
 };

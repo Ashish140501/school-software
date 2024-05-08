@@ -49,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.INTEGER,
     },
+    settings: {
+      type: DataTypes.INTEGER,
+    }
   }, {
     sequelize,
     modelName: 'School',
