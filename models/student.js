@@ -149,6 +149,9 @@ module.exports = (sequelize, DataTypes) => {
     percentage: {
       type: DataTypes.STRING
     },
+    characterCertificate: {
+      type: DataTypes.STRING
+    }
   }, {
     sequelize,
     modelName: 'Student',

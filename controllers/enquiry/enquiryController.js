@@ -104,6 +104,7 @@ enquiryGetService = async (req, res, next) => {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
             where: whereCondition,
             // include: includeConditions,
+            distinct: true,
             order: [[column || 'followUpDate', sort || 'ASC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,

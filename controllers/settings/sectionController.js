@@ -37,6 +37,7 @@ sectionGetService = async (req, res, next) => {
             attributes: { exclude: ['schoolId', 'status', 'createdAt', 'updatedAt'] },
             where: whereCondition,
             // include: includeConditions,
+            distinct: true,
             order: [[column || 'id', sort || 'DESC']],
             limit: limit ? parseInt(limit) : undefined,
             offset: pno && limit ? parseInt(pno) * parseInt(limit) - parseInt(limit) : undefined,

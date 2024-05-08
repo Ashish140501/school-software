@@ -12,7 +12,12 @@ studentCreateService = async (req, res, next) => {
         let result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
-
+            console.log('file')
+            console.log(req.file)
+            console.log('files')
+            console.log(req.files)
+            console.log('req')
+            // console.log(req)
             let results = await Student.create({
                 schoolId: req.user.schoolId,
                 session: data.session,
@@ -68,6 +73,7 @@ studentCreateService = async (req, res, next) => {
                     IFSCCode: data.IFSCCode,
                     accountNo: data.accountNo,
                     panNo: data.panNo,
+                    // uploadPanCard:data.uploadPanCard,
                     fatherName: data.fatherName,
                     fatherQualification: data.fatherQualification,
                     fatherOccupation: data.fatherOccupation,
@@ -81,7 +87,7 @@ studentCreateService = async (req, res, next) => {
                     motherQualification: data.motherQualification,
                     motherOccupation: data.motherOccupation,
                     motherIncome: data.motherIncome,
-                    MotherAadhardCard: data.MotherAadhardCard,
+                    motherAadhardCard: data.motherAadhardCard,
                     motherPhoto: data.motherPhoto,
                     motherMobileNo: data.motherMobileNo,
                     motherEmail: data.motherEmail,

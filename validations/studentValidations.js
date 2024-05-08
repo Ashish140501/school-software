@@ -42,16 +42,6 @@ const studentCreateValidation = {
         trim: true,
         escape: true,
     },
-    rollNo: {
-        exists: {
-            errorMessage: "rollNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "rollNo cannot be empty" },
-        isString: { errorMessage: "rollNo should be string" },
-        trim: true,
-        escape: true,
-    },
     firstName: {
         exists: {
             errorMessage: "firstName is required",
@@ -145,21 +135,39 @@ const studentCreateValidation = {
     },
     aadharNo: {
         optional: {},
-        isNumeric: { errorMessage: "aadharNo should be in numeric" },
-        isInt:{ errorMessage: "aadharNo should be integer" },
-        isLength: {
-            options: { min: 12, max: 12 },
-            errorMessage: "aadharNo should be 10 Digits",
-        },
         trim: true,
         escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                console.log(value)
+                if (value == null || value == '') {
+                    return true
+                }
+                else{
+                    if(value.length !== 12){
+                        throw new Error('aadharNo should have 12 digits')
+                    }
+                }
+            },
+        }
     },
     transport: {
         optional: {},
-        isNumeric: { errorMessage: "transport should be in numeric" },
-        isInt:{ errorMessage: "transport should be integer" },
         trim: true,
         escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                console.log(value)
+                if (value == null || value == '') {
+                    return true
+                }
+                else{
+                    if(typeof(value) !== 'number'){
+                        throw new Error('transport should have integer')
+                    }
+                }
+            },
+        }
     },
     religion: {
         optional: {},
@@ -169,8 +177,6 @@ const studentCreateValidation = {
     },
     studentType: {
         optional: {},
-        isNumeric: { errorMessage: "studentType should be in numeric" },
-        isInt:{ errorMessage: "studentType should be integer" },
         trim: true,
         escape: true,
     },
@@ -227,22 +233,19 @@ const studentCreateValidation = {
     },
     passYear: {
         optional: {},
-        isNumeric: { errorMessage: "pass year should be in numeric" },
-        isInt:{ errorMessage: "pass year should be integer" },
+        isString: { errorMessage: "pass year should be string" },
         trim: true,
         escape: true,
     },
     obtMarks: {
         optional: {},
-        isNumeric: { errorMessage: "marks should be in numeric" },
-        isInt:{ errorMessage: "marks should be integer" },
+        isString: { errorMessage: "obtMarks should be string" },
         trim: true,
         escape: true,
     },
     age: {
         optional: {},
-        isNumeric: { errorMessage: "age should be in numeric" },
-        isInt:{ errorMessage: "age should be integer" },
+        isString: { errorMessage: "age should be string" },
         trim: true,
         escape: true,
     },
@@ -254,15 +257,34 @@ const studentCreateValidation = {
     },
     studentId: {
         optional: {},
-        isNumeric: { errorMessage: "student id should be in numeric" },
-        isInt:{ errorMessage: "student id should be integer" },
+        isString: { errorMessage: "student id should be string" },
         trim: true,
         escape: true,
     },
     familyId: {
         optional: {},
-        isNumeric: { errorMessage: "family id should be in numeric" },
-        isInt:{ errorMessage: "family id should be integer" },
+        isString: { errorMessage: "family id should be string" },
+        trim: true,
+        escape: true,
+    },
+    staffNo: {
+        optional: {},
+        isString: { errorMessage: "staff no should be string" },
+        trim: true,
+        escape: true,
+    },
+    availingTransport: {
+        optional: {},
+        isString: {
+            options: [['Yes', 'No']], 
+            errorMessage: "availingTransport should be string" 
+        },
+        trim: true,
+        escape: true,
+    },
+    percentage: {
+        optional: {},
+        isString: { errorMessage: "percentage should be string" },
         trim: true,
         escape: true,
     },
@@ -286,8 +308,7 @@ const studentCreateValidation = {
     },
     accountNo: {
         optional: {},
-        isNumeric: { errorMessage: "account no should be in numeric" },
-        isInt:{ errorMessage: "account no should be integer" },
+        isString: { errorMessage: "accountNo should be string" },
         trim: true,
         escape: true,
     },
@@ -317,71 +338,61 @@ const studentCreateValidation = {
     },
     fatherIncome: {
         optional: {},
-        isNumeric: { errorMessage: "father income should be in numeric" },
-        isInt:{ errorMessage: "father income should be integer" },
+        isString: { errorMessage: "father income should be string" },
         trim: true,
         escape: true,
     },
     Address: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "Address should be string" },
         trim: true,
         escape: true,
     },
     fatherMobileNo: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "father mobile no should be string" },
         trim: true,
         escape: true,
     },
     fatherEmail: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "father email should be string" },
         trim: true,
         escape: true,
     },
     motherName: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother name should be string" },
         trim: true,
         escape: true,
     },
     motherQualification: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother qualification should be string" },
         trim: true,
         escape: true,
     },
     motherOccupation: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother occupation should be string" },
         trim: true,
         escape: true,
     },
     motherIncome: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother income should be string" },
         trim: true,
         escape: true,
     },
     motherMobileNo: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother mobile no should be string" },
         trim: true,
         escape: true,
     },
     motherEmail: {
         optional: {},
-        isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isString: { errorMessage: "mother email should be string" },
         trim: true,
         escape: true,
     },

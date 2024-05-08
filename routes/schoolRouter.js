@@ -7,6 +7,8 @@ const multer = require('multer');
 const { S3Client } = require('@aws-sdk/client-s3');
 const multerS3 = require('multer-s3');
 
+const uploadImages = multer({ dest: '../utils/upload' })
+
 //----controllers----//
 const { 
     enquiryCreateService,
@@ -48,6 +50,19 @@ const {
     studentGetService
 } = require('../controllers/student/studentController')
 
+const {
+    transportCreate,
+    transportUpdate,
+    transportGet
+} = require('../controllers/settings/transportController')
+
+
+const {
+    studentTypeCreate,
+    studentTypeUpdate,
+    studentTypeGet
+} = require('../controllers/settings/studentTypeController')
+
 
 //----validations----//
 const { 
@@ -69,6 +84,16 @@ const {
 const {
     studentCreateValidation
 } = require('../validations/studentValidations')
+
+const {
+    transportCreateValidation,
+    transportUpdateValidation
+} = require('../validations/transportValidations')
+
+const {
+    studentTypeCreateValidation,
+    studentTypeUpdateValidation
+} = require('../validations/studentTypeValidations')
 
 let s3 = new S3Client({
     region: 'us-east-1',
@@ -93,7 +118,7 @@ const upload = multer({
             cb(null, Date.now().toString() + file.originalname)
         }
     })
-});
+})
 
 //--enquiry-routes--//
 router.post('/enquiry/create', checkSchema(enquiryCreateValidation), (req, res, next) => {
@@ -130,9 +155,7 @@ router.get('/section/get', (req, res, next) => {
     sectionGetService(req, res, next);
 });
 
-
-//--student-routes--//
-router.post('/student/create', checkSchema(studentCreateValidation), upload.fields([
+const photos = [
     { name: 'studentPhoto', maxCount: 1 }, 
     { name: 'casteCertificate', maxCount: 1 }, 
     { name: 'birthCertificate', maxCount: 1 },
@@ -142,7 +165,13 @@ router.post('/student/create', checkSchema(studentCreateValidation), upload.fiel
     { name: 'fatherPhoto', maxCount: 1 },
     { name: 'MotherAadhardCard', maxCount: 1 },
     { name: 'motherPhoto', maxCount: 1 },
-  ]), (req, res, next) => {
+    { name: 'uploadPanCard', maxCount: 1 },
+    { name: 'characterCertificate', maxCount: 1 },
+]
+
+
+//--student-routes--//
+router.post('/student/create', upload.fields('photos'), checkSchema(studentCreateValidation), (req, res, next) => {
     studentCreateService(req, res, next);
 });
 
@@ -186,6 +215,33 @@ router.post('/table-list/update', checkSchema(tableListUpdateValidation), (req, 
 
 router.get('/table-list/get', (req, res, next) => {
     tableListGet(req, res, next);
+});
+
+
+//--transport-apis--//
+router.post('/transport/create', checkSchema(transportCreateValidation), (req, res, next) => {
+    transportCreate(req, res, next);
+});
+
+router.post('/transport/update', checkSchema(transportUpdateValidation), (req, res, next) => {
+    transportUpdate(req, res, next);
+});
+
+router.get('/transport/get', (req, res, next) => {
+    transportGet(req, res, next);
+});
+
+//--student-type-apis--//
+router.post('/student-type/create', checkSchema(studentTypeCreateValidation), (req, res, next) => {
+    studentTypeCreate(req, res, next);
+});
+
+router.post('/student-type/update', checkSchema(studentTypeUpdateValidation), (req, res, next) => {
+    studentTypeUpdate(req, res, next);
+});
+
+router.get('/student-type/get', (req, res, next) => {
+    studentTypeGet(req, res, next);
 });
 
 
