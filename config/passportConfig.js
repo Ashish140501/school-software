@@ -3,7 +3,7 @@ const { User } = require('../models')
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: "Avadoha_dasvande"
 };
 
 module.exports = passport => {
