@@ -37,10 +37,6 @@ router.post('/school/reset-password', (req, res, next) => {
     schoolResetPasswordService(req, res, next);
 });
 
-router.put('/school/edit', schoolEditValidation, (req, res, next) => {
-    schoolUpdateService(req, res, next)
-})
-
 router.use((req, res, next) => {
     console.log("came");
     next(createError(404, "Not found1"));

@@ -31,10 +31,7 @@ const enquiryCreateValidation = {
         escape: true,
     },
     lastName: {
-        exists: {
-            errorMessage: "last name is required",
-            options: { checkFalsy: true },
-        },
+        optional:{},
         notEmpty: { errorMessage: "last name cannot be empty" },
         isString: { errorMessage: "last name should be string" },
         trim: true,
