@@ -45,6 +45,7 @@ const {
 
 const {
     studentCreateService,
+    studentUpdateService,
     studentGetService
 } = require('../controllers/student/studentController')
 
@@ -60,6 +61,13 @@ const {
     studentTypeUpdate,
     studentTypeGet
 } = require('../controllers/settings/studentTypeController')
+
+const {
+    casteCreate,
+    casteGet,
+    religionCreate,
+    religionGet
+} = require('../controllers/settings/casteReligionController')
 
 
 //----validations----//
@@ -80,7 +88,8 @@ const {
 } = require('../validations/tableListValidations')
 
 const {
-    studentCreateValidation
+    studentCreateValidation,
+    studentUpdateValidation
 } = require('../validations/studentValidations')
 
 const {
@@ -153,24 +162,38 @@ router.get('/section/get', (req, res, next) => {
     sectionGetService(req, res, next);
 });
 
-const photos = [
-    { name: 'studentPhoto', maxCount: 1 }, 
-    { name: 'casteCertificate', maxCount: 1 }, 
+
+//--student-routes--//
+router.post('/student/create', upload.fields([
+    { name: 'studentPhoto', maxCount: 1 },
+    { name: 'casteCertificate', maxCount: 1 },
     { name: 'birthCertificate', maxCount: 1 },
     { name: 'aadharCard', maxCount: 1 },
     { name: 'transferCertificate', maxCount: 1 },
     { name: 'fatherAadharCard', maxCount: 1 },
     { name: 'fatherPhoto', maxCount: 1 },
-    { name: 'MotherAadhardCard', maxCount: 1 },
+    { name: 'motherAadharCard', maxCount: 1 },
     { name: 'motherPhoto', maxCount: 1 },
     { name: 'uploadPanCard', maxCount: 1 },
     { name: 'characterCertificate', maxCount: 1 },
-]
-
-
-//--student-routes--//
-router.post('/student/create', upload.fields('photos'), checkSchema(studentCreateValidation), (req, res, next) => {
+]),  (req, res, next) => {
     studentCreateService(req, res, next);
+});
+
+router.post('/student/update', upload.fields([
+    { name: 'studentPhoto', maxCount: 1 },
+    { name: 'casteCertificate', maxCount: 1 },
+    { name: 'birthCertificate', maxCount: 1 },
+    { name: 'aadharCard', maxCount: 1 },
+    { name: 'transferCertificate', maxCount: 1 },
+    { name: 'fatherAadharCard', maxCount: 1 },
+    { name: 'fatherPhoto', maxCount: 1 },
+    { name: 'motherAadharCard', maxCount: 1 },
+    { name: 'motherPhoto', maxCount: 1 },
+    { name: 'uploadPanCard', maxCount: 1 },
+    { name: 'characterCertificate', maxCount: 1 },
+]), checkSchema(studentUpdateValidation), (req, res, next) => {
+    studentUpdateService(req, res, next);
 });
 
 router.get('/student/get', (req, res, next) => {
@@ -242,7 +265,25 @@ router.get('/student-type/get', (req, res, next) => {
     studentTypeGet(req, res, next);
 });
 
+//--caste-religion--//
+router.post('/caste/create', (req, res, next) => {
+    casteCreate(req, res, next);
+});
 
+router.get('/caste/get', (req, res, next) => {
+    casteGet(req, res, next);
+});
+
+router.post('/religion/create', (req, res, next) => {
+    religionCreate(req, res, next);
+});
+
+router.get('/religion/get', (req, res, next) => {
+    religionGet(req, res, next);
+});
+
+
+//------------------------------------//
 router.use((req, res, next) => {
     next(createError(404, "Not found"));
 });

@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
       Student.belongsTo(models.Class, {
         foreignKey: 'classId'
       });
+      Student.belongsTo(models.Transport, {
+        foreignKey: 'transportId'
+      });
+      Student.hasOne(models.Family, {
+        foreignKey: 'studentId'
+      });
     }
   }
   Student.init({
@@ -57,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     DOB: {
-      type: DataTypes.STRING
+      type: DataTypes.DATEONLY
     },
     bloodGroup: {
       type: DataTypes.STRING
@@ -71,8 +77,8 @@ module.exports = (sequelize, DataTypes) => {
     aadharNo: {
       type: DataTypes.STRING
     },
-    transport: {
-      type: DataTypes.STRING
+    transportId: {
+      type: DataTypes.INTEGER
     },
     religion: {
       type: DataTypes.STRING
@@ -131,9 +137,9 @@ module.exports = (sequelize, DataTypes) => {
     schoolName: {
       type: DataTypes.STRING
     },
-    studentId: {
-      type: DataTypes.STRING
-    },
+    // studentId: {
+    //   type: DataTypes.STRING
+    // },
     familyId: {
       type: DataTypes.STRING
     },

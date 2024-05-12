@@ -4,7 +4,7 @@ const { Sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, Student, Family, Class, Section } = require('../../models')
+const { sequelize, Student, Family, Class, Section, Transport } = require('../../models')
 
 
 studentCreateService = async (req, res, next) => {
@@ -12,12 +12,6 @@ studentCreateService = async (req, res, next) => {
         let result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
-            console.log('file')
-            console.log(req.file)
-            console.log('files')
-            console.log(req.files)
-            console.log('req')
-            // console.log(req)
             let results = await Student.create({
                 schoolId: req.user.schoolId,
                 session: data.session,
@@ -35,7 +29,7 @@ studentCreateService = async (req, res, next) => {
                 rte: data.rte,
                 rteApplicationNo: data.rteApplicationNo,
                 availingTransport: data.availingTransport,
-                transport: data.transport,
+                transportId: data.transportId,
                 gender: data.gender,
                 DOB: data.DOB,
                 age: data.age,
@@ -55,11 +49,12 @@ studentCreateService = async (req, res, next) => {
                 passYear: data.passYear,
                 obtMarks: data.obtMarks,
                 percentage: data.percentage,
-                studentPhoto: data.studentPhoto,
-                casteCertificate: data.casteCertificate,
-                aadharCard: data.aadharCard,
-                birthCertificate: data.birthCertificate,
-                transferCertificate: data.transferCertificate,
+                studentPhoto: req.files['studentPhoto'] ? req.files['studentPhoto'][0].location : '',
+                casteCertificate: req.files['casteCertificate'] ? req.files['casteCertificate'][0].location : '',
+                aadharCard: req.files['aadharCard'] ? req.files['aadharCard'][0].location : '',
+                birthCertificate: req.files['birthCertificate'] ? req.files['birthCertificate'][0].location : '',
+                transferCertificate: req.files['transferCertificate'] ? req.files['transferCertificate'][0].location : '',
+                characterCertificate: req.files['characterCertificate'] ? req.files['characterCertificate'][0].location : '',
                 studentId: data.studentId,
                 status: 1,
             });
@@ -73,13 +68,13 @@ studentCreateService = async (req, res, next) => {
                     IFSCCode: data.IFSCCode,
                     accountNo: data.accountNo,
                     panNo: data.panNo,
-                    // uploadPanCard:data.uploadPanCard,
+                    uploadPanCard: req.files['uploadPanCard'] ? req.files['uploadPanCard'][0].location : '',
                     fatherName: data.fatherName,
                     fatherQualification: data.fatherQualification,
                     fatherOccupation: data.fatherOccupation,
                     fatherIncome: data.fatherIncome,
-                    fatherAadharCard: data.fatherAadharCard,
-                    fatherPhoto: data.fatherPhoto,
+                    fatherAadharCard: req.files['fatherAadharCard'] ? req.files['fatherAadharCard'][0].location : '',
+                    fatherPhoto: req.files['fatherPhoto'] ? req.files['fatherPhoto'][0].location : '',
                     Address: data.Address,
                     fatherMobileNo: data.fatherMobileNo,
                     fatherEmail: data.fatherEmail,
@@ -87,12 +82,12 @@ studentCreateService = async (req, res, next) => {
                     motherQualification: data.motherQualification,
                     motherOccupation: data.motherOccupation,
                     motherIncome: data.motherIncome,
-                    motherAadhardCard: data.motherAadhardCard,
-                    motherPhoto: data.motherPhoto,
+                    motherAadharCard: req.files['motherAadharCard'] ? req.files['motherAadharCard'][0].location : '',
+                    motherPhoto: req.files['motherPhoto'] ? req.files['motherPhoto'][0].location : '',
                     motherMobileNo: data.motherMobileNo,
                     motherEmail: data.motherEmail,
                     fatherAadharNo: data.fatherAadharNo,
-                    motherAadharNo: data.motherAadharNo 
+                    motherAadharNo: data.motherAadharNo
                 });
 
                 return res.status(200).json({
@@ -118,7 +113,148 @@ studentCreateService = async (req, res, next) => {
         }
     }
     catch (err) {
-        //console.log(err);
+        console.log(err);
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+};
+
+studentUpdateService = async (req, res, next) => {
+    try {
+        let result = validationResult(req);
+        if (result.isEmpty()) {
+            let data = matchedData(req);
+            let student = await Student.findOne({ where: { id: data.id }})
+            if(!student)
+                return res.status(400).json({
+                    "code": 400,
+                    "message": "student not exist",
+                    "data": []
+                }); 
+
+                console.log('uploads check')
+                console.log(req.body.birthCertificate)
+                console.log(typeof req.body.birthCertificate)
+
+                console.log(req.body.uploadPanCard)
+                console.log(typeof req.body.uploadPanCard)
+
+                console.log(req.body.characterCertificate)
+                console.log(typeof req.body.characterCertificate)
+
+            let studentUpdate = await Student.update(
+                {
+                    session: data.session,
+                    admissionDate: data.admissionDate,
+                    admissionNo: data.admissionNo,
+                    rollNo: data.rollNo,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    contactNo: data.contactNo,
+                    fatherName: data.fatherName,
+                    classId: data.classId,
+                    sectionId: data.sectionId,
+                    studentType: data.studentType,
+                    staffNo: data.staffNo,
+                    rte: data.rte,
+                    rteApplicationNo: data.rteApplicationNo,
+                    availingTransport: data.availingTransport,
+                    transportId: data.transportId,
+                    gender: data.gender,
+                    DOB: data.DOB,
+                    age: data.age,
+                    height: data.height,
+                    weight: data.weight,
+                    bloodGroup: data.bloodGroup,
+                    caste: data.caste,
+                    religion: data.religion,
+                    nationality: data.nationality,
+                    aadharNo: data.aadharNo,
+                    registrationNo: data.registrationNo,
+                    crnNo: data.crnNo,
+                    udiseNo: data.udiseNo,
+                    familyId: data.familyId,
+                    schoolName: data.schoolName,
+                    previousClass: data.previousClass,
+                    passYear: data.passYear,
+                    obtMarks: data.obtMarks,
+                    percentage: data.percentage,
+                    studentPhoto: imageValidation( req.body.studentPhoto, 'studentPhoto', req ),
+                    casteCertificate: imageValidation( req.body.casteCertificate, 'casteCertificate', req ),
+                    aadharCard: imageValidation( req.body.aadharCard, 'aadharCard', req ),
+                    birthCertificate: imageValidation( req.body.birthCertificate, 'birthCertificate', req ),
+                    transferCertificate: imageValidation( req.body.transferCertificate, 'transferCertificate', req ),
+                    characterCertificate: imageValidation( req.body.characterCertificate, 'characterCertificate', req ),
+                    studentId: data.studentId,
+                    status: 1,
+                },
+                {
+                    where: {
+                        id: student.id,
+                        schoolId: req.user.schoolId,
+                    }
+                }
+            );
+            if (studentUpdate > 0) {
+                let familyCreate = await Family.update(
+                    {
+                        bankName: data.bankName,
+                        bankBranch: data.bankBranch,
+                        IFSCCode: data.IFSCCode,
+                        accountNo: data.accountNo,
+                        panNo: data.panNo,
+                        uploadPanCard: imageValidation( req.body.uploadPanCard, 'uploadPanCard', req ),
+                        fatherName: data.fatherName,
+                        fatherQualification: data.fatherQualification,
+                        fatherOccupation: data.fatherOccupation,
+                        fatherIncome: data.fatherIncome,
+                        fatherAadharCard: imageValidation( req.body.fatherAadharCard, 'fatherAadharCard', req ),
+                        fatherPhoto: imageValidation( req.body.fatherPhoto, 'fatherPhoto', req ),
+                        Address: data.Address,
+                        fatherMobileNo: data.fatherMobileNo,
+                        fatherEmail: data.fatherEmail,
+                        motherName: data.motherName,
+                        motherQualification: data.motherQualification,
+                        motherOccupation: data.motherOccupation,
+                        motherIncome: data.motherIncome,
+                        motherAadharCard: imageValidation( req.body.motherAadharCard, 'motherAadharCard', req ),
+                        motherPhoto: imageValidation( req.body.motherPhoto, 'motherPhoto', req ),
+                        motherMobileNo: data.motherMobileNo,
+                        motherEmail: data.motherEmail,
+                        fatherAadharNo: data.fatherAadharNo,
+                        motherAadharNo: data.motherAadharNo
+                    },
+                    {
+                        where: {
+                            schoolId: req.user.schoolId,
+                            studentId: student.id,
+                        }
+                    }
+                );
+
+                return res.status(200).json({
+                    "code": 200,
+                    "message": "student details updated successfully",
+                    "data": []
+                });
+            }
+            else {
+                return res.status(400).json({
+                    "code": 400,
+                    "message": "student details cannot be updated",
+                    "data": []
+                });
+            }
+        }
+        else {
+            return res.status(422).json({
+                "code": 422,
+                "message": "student details update cannot be processed",
+                "data": result.array()
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
         next(createError(500, "Some thing went wrong " + err.message));
     }
 };
@@ -132,8 +268,10 @@ studentGetService = async (req, res, next) => {
         };
 
         const includeConditions = [
-            { model: Section, required: true, attributes: [], where: { schoolId:req.user.schoolId } },
-            { model: Class, required: true, attributes: [], where: { schoolId:req.user.schoolId } },
+            { model: Section, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
+            { model: Class, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
+            { model: Transport, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
+            { model: Family, attributes: { exclude: ['id', 'schoolId', 'createdAt', 'updatedAt'] }, where: { schoolId: req.user.schoolId } },
         ];
 
         if (admissionList) {
@@ -154,24 +292,25 @@ studentGetService = async (req, res, next) => {
         if (searchString !== undefined && searchString !== null) {
 
             whereCondition[Op.or] = [
-                sequelize.where(sequelize.col('name'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('parentName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('firstName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('lastName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('fatherName'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('contactNo'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('class'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('previousSchool'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('villageOrCity'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('district'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('remarks'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('parentConcern'), { [Op.iLike]: `%${searchString}%` }),
+                // sequelize.where(sequelize.col('admissionDate'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Class.class'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Section.section'), { [Op.iLike]: `%${searchString}%` }),
             ];
         }
 
         const queryOptions = {
             attributes: {
-                exclude: ['createdAt', 'updatedAt'],
+                exclude: ['createdAt', 'updatedAt', 'schoolId',],
                 include: [
                     [sequelize.col('Class.class'), 'className'],
-                    [sequelize.col('Section.section'), 'sectionName']
+                    [sequelize.col('Section.section'), 'sectionName'],
+                    [sequelize.col('Family.id'), 'familyId'],
+                    [sequelize.col('Transport.pickUp'), 'transport']
                 ]
             },
             where: whereCondition,
@@ -194,98 +333,30 @@ studentGetService = async (req, res, next) => {
                 rows: results.rows
             }
         });
-    } 
+    }
     catch (error) {
+        console.log(error)
         next(createError(500, "Something went wrong: " + error.message));
     }
 };
 
-enquiryUpdateService = async (req, res, next) => {
-    try {
-        let result = validationResult(req);
-        if (result.isEmpty()) {
-            let data = matchedData(req);
-            let results = await Enquiry.update(
-                {
-                    enquiryDate: data.enquiryDate,
-                    name: data.name,
-                    parentName: data.parentName,
-                    contactNo: data.contactNo,
-                    class: data.class,
-                    previousSchool: data.previousSchool,
-                    villageOrCity: data.villageOrCity,
-                    district: data.district,
-                    followUpDate: data.followUpDate,
-                    remarks: data.remarks,
-                    parentConcern: data.parentConcern,
-                    status: data.status,
-                },
-                {
-                    where: {
-                        id: data.id,
-                        schoolId: req.user.schoolId
-                    }
-                }
-            );
-            if (results > 0) {
-                return res.status(200).json({
-                    "code": 200,
-                    "message": "enquiry updated successfully",
-                    "data": []
-                });
-            }
-            else {
-                return res.status(400).json({
-                    "code": 400,
-                    "message": "enquiry cannot be updated",
-                    "data": []
-                });
-            }
-        }
-        else {
-            return res.status(422).json({
-                "code": 422,
-                "message": "invalid details",
-                "data": result.array()
-            });
-        }
-    }
-    catch (err) {
-        //console.log(err);
-        next(createError(500, "Some thing went wrong " + err.message));
-    }
-};
+imageValidation = ( field, value, req ) => {
 
-enquiryDeleteService = async (req, res, next) => {
-    try {
-        let result = validationResult(req);
-        if (result.isEmpty()) {
-            let data = matchedData(req);
-            const results = await Enquiry.destroy({
-                where: {
-                    id: data.id
-                }
-            })
-            return res.status(200).json({
-                "code": 200,
-                "message": "deleted Enquiry",
-                "data": []
-            });
-        }
-        else {
-            return res.status(422).json({
-                "code": 422,
-                "message": "invalid details",
-                "data": result.array()
-            });
-        }
-    }
-    catch (err) {
-        next(createError(500, "Some thing went wrong " + err.message));
-    }
-};
+    if(req.files && req.files[value]){
+        return req.files[value][0].location;
+    };
+
+    if(field == null || field == ''){
+        return ''
+    };
+
+    if(field){
+        return field
+    };
+}
 
 module.exports = {
     studentCreateService,
+    studentUpdateService,
     studentGetService
 }

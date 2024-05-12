@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Family.belongsTo(models.Student, {
+        foreignKey: 'studentId'
+      });
     }
   }
   Family.init({
@@ -74,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
     motherIncome: {
       type: DataTypes.STRING
     },
-    motherAadhardCard: {
+    motherAadharCard: {
       type: DataTypes.STRING
     },
     motherPhoto: {
@@ -92,6 +95,9 @@ module.exports = (sequelize, DataTypes) => {
     motherAadharNo: {
       type: DataTypes.STRING
     },
+    uploadPanCard: {
+      type: DataTypes.STRING
+    }
   }, {
     sequelize,
     modelName: 'Family',

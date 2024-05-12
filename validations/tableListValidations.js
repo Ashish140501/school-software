@@ -80,14 +80,17 @@ const tableListUpdateValidation = {
         escape: true,
     },
     'list.*.list.*.status':{
-        exists:{
-            errorMessage: "status is required",
-            options:{checkFalsy: true},
+        exists: {
+            errorMessage: "Status is required",
+            options: { checkFalsy: false },
         },
-        isNumeric: { errorMessage: "status should be in numeric" },
-        isInt:{ errorMessage: "status should be integer" },
-        trim: true,
+        notEmpty: { errorMessage: "status cannot be empty" },
+        isNumeric: { errorMessage: "invalid status" },
         escape: true,
+        isInt: {
+            options: [[0, 1]],
+            errorMessage: 'only either 0 or 1'
+        },
     },
     'list.*.list.*.default':{
         exists:{

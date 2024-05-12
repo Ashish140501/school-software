@@ -46,6 +46,12 @@ module.exports = (sequelize, DataTypes) => {
     website: {
       type: DataTypes.STRING,
     },
+    admissionNoSeq: {
+      type: DataTypes.STRING,
+    },
+    rollNoSeq: {
+      type: DataTypes.STRING,
+    },
     status: {
       type: DataTypes.INTEGER,
     },

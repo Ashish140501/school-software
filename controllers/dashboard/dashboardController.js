@@ -12,6 +12,7 @@ enquiryCount = async (req, res, next) => {
 
         const todayCount = await Enquiry.count({
             where: {
+                schoolId: req.user.schoolId,
                 followUpDate: {
                     [Op.lte]: moment().format('YYYY-MM-DD')
                 }
