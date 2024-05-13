@@ -17,17 +17,7 @@ const studentTypeCreateValidation = {
         isString: { errorMessage: "studentType should be string" },
         trim: true,
         escape: true,
-    },
-    status:{
-        exists:{
-            errorMessage: "status is required",
-            options:{checkFalsy: true},
-        },
-        isNumeric: { errorMessage: "status should be in numeric" },
-        isInt:{ errorMessage: "status should be integer" },
-        trim: true,
-        escape: true,
-    },       
+    },      
 }
 
 const studentTypeUpdateValidation = {
@@ -48,16 +38,6 @@ const studentTypeUpdateValidation = {
         },
         notEmpty: { errorMessage: "studentType cannot be empty" },
         isString: { errorMessage: "studentType should be string" },
-        trim: true,
-        escape: true,
-    },
-    status:{
-        exists:{
-            errorMessage: "status is required",
-            options:{checkFalsy: true},
-        },
-        isNumeric: { errorMessage: "status should be in numeric" },
-        isInt:{ errorMessage: "status should be integer" },
         trim: true,
         escape: true,
     },

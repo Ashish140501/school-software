@@ -312,11 +312,7 @@ const studentCreateValidation = {
         escape: true,
     },
     fatherAadharNo: {
-        exists: {
-            errorMessage: "fatherAadharNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "fatherAadharNo cannot be empty" },
+        optional: {},
         isString: { errorMessage: "fatherAadharNo should be string" },
         trim: true,
         escape: true,
@@ -364,11 +360,7 @@ const studentCreateValidation = {
         escape: true,
     },
     motherAadharNo: {
-        exists: {
-            errorMessage: "motherAadharNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "motherAadharNo cannot be empty" },
+        optional: {},
         isString: { errorMessage: "motherAadharNo should be string" },
         trim: true,
         escape: true,

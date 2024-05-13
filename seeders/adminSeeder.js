@@ -194,78 +194,78 @@ admissionListSeed = async (schoolId) => {
                 "list": [
                     {
                         "field": "Father name",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Qualification",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Occupation",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Address",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Mobile no",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Email",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Income",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Aadhar Card No",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother name",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Qualification",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Occupation",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Mobile no",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Email",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Income",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Aadhard Card No",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Bank Name",
@@ -335,23 +335,23 @@ admissionListSeed = async (schoolId) => {
                     },
                     {
                         "field": "Father Photo",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Father Aadhar Card",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Photo",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                     {
                         "field": "Mother Aadhar Card",
-                        "default":"false",
-                        "status": 1
+                        "default": "false",
+                        "status": "1"
                     },
                 ]
             },
