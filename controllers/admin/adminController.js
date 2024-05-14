@@ -15,7 +15,7 @@ schoolOnboardService = async (req, res, next) => {
         const result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
-            
+
             let [school, schoolCreated] = await School.findOrCreate({
                 where: { name: data.name },
                 defaults: {
@@ -43,8 +43,8 @@ schoolOnboardService = async (req, res, next) => {
                 })
                 if (role) {
                     let getpermission = await Permission.findOne({
-                        where : {
-                            name: "CAN_ACCESS_ALL" 
+                        where: {
+                            name: "CAN_ACCESS_ALL"
                         },
                     });
                     let assignPermissionsToRole = await RoleHasPermission.create({
@@ -52,7 +52,7 @@ schoolOnboardService = async (req, res, next) => {
                         permissionId: getpermission.id
                     });
                 }
-                
+
                 admissionListSeed(school.id)
 
                 let saltResult = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
@@ -130,12 +130,12 @@ schoolOnboardService = async (req, res, next) => {
     }
 };
 
-schoolLoginService = async (req, res, next) => { 
+schoolLoginService = async (req, res, next) => {
     try {
         const result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
-            
+
             let userDetails = await User.findOne({ where: { email: data.email } });
             let schoolDetails = await School.findOne({ where: { id: userDetails.schoolId } });
 
@@ -165,7 +165,7 @@ schoolLoginService = async (req, res, next) => {
                         process.env.JWT_SECRET,
                         { expiresIn: '1d' }
                     );
-                    
+
                     const role = await Role.findOne({
                         attributes: ['id', 'name'],
                         where: {
@@ -173,7 +173,7 @@ schoolLoginService = async (req, res, next) => {
                             schoolId: userDetails.schoolId
                         },
                     })
-                    if(role){
+                    if (role) {
                         const rolePermissions = await RoleHasPermission.findAll({
                             attributes: [[sequelize.col('Permission.id'), 'permissionId'], [sequelize.col('Permission.name'), 'displayName'],],
                             where: {
@@ -203,7 +203,7 @@ schoolLoginService = async (req, res, next) => {
                             ]
                         });
                     }
-                    else{
+                    else {
                         return res.status(200).json({
                             "code": 200,
                             "message": "users exists",
@@ -253,7 +253,7 @@ schoolUpdateService = async (req, res, next) => {
     }
     try {
         const { id } = req.query
-        if(!id)  return res.status(400).json({ message: "Id is required" });
+        if (!id) return res.status(400).json({ message: "Id is required" });
         let { name, logo, banner, contactNo, alternateContactNo, address, city, state } = matchedData(req);
         const updateFields = {};
         if (name) updateFields.name = name;
@@ -295,8 +295,8 @@ schoolForgetPasswordService = async (req, res, next) => {
         }
 
         // Extract email from request body
-        const { email } = req.body;
-
+        const email = req.body.email.toUpperCase();
+        
         // Check if user with provided email exists
         const user = await User.findOne({ where: { email } });
         if (!user) {
@@ -315,7 +315,7 @@ schoolForgetPasswordService = async (req, res, next) => {
         );
 
         // Send reset password email
-        const resetLink = await sendResetPasswordEmail(email, resetToken);
+        const resetLink = await sendResetPasswordEmail(user.name, email, resetToken, false);
 
         return res.status(200).json({
             code: 200,

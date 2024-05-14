@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class School extends Model {
+  class SuperUser extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,60 +13,38 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  School.init({
+  SuperUser.init({
     name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    logo: {
+    email: {
       type: DataTypes.STRING,
-    },
-    banner: {
-      type: DataTypes.STRING,
+      allowNull: false
     },
     contactNo: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    alternateContactNo: {
-      type: DataTypes.STRING,
-    },
-    address: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    city: {
+    pwd: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    state: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    website: {
+    imageUrl: {
       type: DataTypes.STRING,
     },
-    admissionNoSeq: {
-      type: DataTypes.STRING,
-    },
-    rollNoSeq: {
-      type: DataTypes.STRING,
+    roleId: {
+      type: DataTypes.INTEGER,
     },
     status: {
       type: DataTypes.INTEGER,
     },
-    settings: {
-      type: DataTypes.INTEGER,
+    deletedAt: {
+      type: DataTypes.DATE,
     },
-    contactPerson: {
-      type: DataTypes.STRING,
-    },
-    blockedAt: {
-      type: DataTypes.DATE
-    }
   }, {
     sequelize,
-    modelName: 'School',
+    modelName: 'SuperUser',
   });
-  return School;
+  return SuperUser;
 };
