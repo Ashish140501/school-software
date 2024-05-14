@@ -4,32 +4,51 @@ const { Sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, Student, Family, Class, Section, Transport } = require('../../models')
-
+const { sequelize, Student, Family, Class, Section, Transport, School } = require('../../models')
 
 studentCreateService = async (req, res, next) => {
     try {
         let result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
+
+            let admission = await Student.max( 'admissionNo', { where: { schoolId: req.user.schoolId}})
+            if(admission){
+                admission = parseInt(admission)+1
+            }
+            else{
+                admission = await School.findOne({attributes:['admissionNoSeq'], where: {id: req.user.schoolId}})
+                admission = admission.admissionNoSeq;
+            }
+
+            let rollNo = await Student.max( 'rollNo', { where: { schoolId: req.user.schoolId, classId: data.classId }})
+
+            if(rollNo){
+                rollNo = parseInt(rollNo)+1
+            }
+            else{
+                rollNo = await School.findOne({attributes:['rollNoSeq'], where: {id: req.user.schoolId}});
+                rollNo = rollNo.rollNoSeq
+            }
+            
             let results = await Student.create({
-                schoolId: req.user.schoolId,
+                schoolId: parseInt(req.user.schoolId),
                 session: data.session,
                 admissionDate: data.admissionDate,
-                admissionNo: data.admissionNo,
-                rollNo: data.rollNo,
+                admissionNo: admission,
+                rollNo: rollNo,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 contactNo: data.contactNo,
                 fatherName: data.fatherName,
-                classId: data.classId,
-                sectionId: data.sectionId,
+                classId: parseInt(data.classId),
+                sectionId: parseInt(data.sectionId),
                 studentType: data.studentType,
                 staffNo: data.staffNo,
                 rte: data.rte,
                 rteApplicationNo: data.rteApplicationNo,
                 availingTransport: data.availingTransport,
-                transportId: data.transportId,
+                transportId: data.transportId == '' ? null : data.transportId,
                 gender: data.gender,
                 DOB: data.DOB,
                 age: data.age,
@@ -92,7 +111,7 @@ studentCreateService = async (req, res, next) => {
 
                 return res.status(200).json({
                     "code": 200,
-                    "message": "enquiry created successfully",
+                    "message": "student created successfully",
                     "data": []
                 });
             }
@@ -270,8 +289,8 @@ studentGetService = async (req, res, next) => {
         const includeConditions = [
             { model: Section, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
             { model: Class, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
-            { model: Transport, required: true, attributes: [], where: { schoolId: req.user.schoolId } },
-            { model: Family, attributes: { exclude: ['id', 'schoolId', 'createdAt', 'updatedAt'] }, where: { schoolId: req.user.schoolId } },
+            { model: Transport, required: false, attributes: [], where: { schoolId: req.user.schoolId } },
+            { model: Family, required: true, attributes: { exclude: ['id', 'schoolId', 'createdAt', 'updatedAt'] }, where: { schoolId: req.user.schoolId } },
         ];
 
         if (admissionList) {

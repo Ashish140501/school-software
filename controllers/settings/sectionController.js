@@ -22,9 +22,12 @@ sectionGetService = async (req, res, next) => {
         if (id !== undefined) {
             whereCondition.id = id; 
         }
-
-        if (classId !== undefined) {
-            whereCondition.classId = classId; 
+        else if (classId !== undefined) {
+            whereCondition.classId = classId;
+            whereCondition.status = 1; 
+        }
+        else{
+            whereCondition.status = 1;
         }
 
         if (searchString !== undefined && searchString !== null) {
@@ -34,7 +37,7 @@ sectionGetService = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: { exclude: ['schoolId', 'status', 'createdAt', 'updatedAt'] },
+            attributes: { exclude: ['schoolId', 'createdAt', 'updatedAt'] },
             where: whereCondition,
             // include: includeConditions,
             distinct: true,

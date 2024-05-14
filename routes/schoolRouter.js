@@ -176,7 +176,7 @@ router.post('/student/create', upload.fields([
     { name: 'motherPhoto', maxCount: 1 },
     { name: 'uploadPanCard', maxCount: 1 },
     { name: 'characterCertificate', maxCount: 1 },
-]),  (req, res, next) => {
+]), checkSchema(studentCreateValidation), (req, res, next) => {
     studentCreateService(req, res, next);
 });
 

@@ -17,7 +17,7 @@ studentTypeCreate = async (req, res, next) => {
             let results = await StudentType.create({
                 schoolId: req.user.schoolId,
                 studentType: data.studentType,
-                status: data.status,
+                status: 1,
             })
             return res.status(200).json({
                 "code": 200,
@@ -50,7 +50,6 @@ studentTypeUpdate = async (req, res, next) => {
             let results = await StudentType.update(
                 {
                     studentType: data.studentType,
-                    status: data.status
                 },
                 {
                     where: {
