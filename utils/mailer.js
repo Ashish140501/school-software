@@ -1,19 +1,21 @@
 const nodemailer = require('nodemailer');
 
-const sendResetPasswordEmail = async (email, resetToken) => {
+const sendResetPasswordEmail = async (name, email, resetToken, isNew) => {
     try {
         // Validate email and resetToken
         if (!email || !resetToken) {
             throw new Error('Email and resetToken are required');
         }
 
+        const BASE_URL = process.env.BASE_URL || `http://localhost:3000/reset-password`
+
         // Create a Nodemailer transporter using SMTP transport
         const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
+            host: 'smtp.gmail.com',
             port: 587,
             auth: {
-                user: 'providenci.goldner96@ethereal.email',
-                pass: 'PBwCxsn21WDDRZ9w7v'
+                user: '3eteamdev@gmail.com',
+                pass: 'uvojutcstbjbvofd'
             }
         });
 
@@ -22,18 +24,18 @@ const sendResetPasswordEmail = async (email, resetToken) => {
             throw new Error('Failed to create transporter');
         }
 
-        const link = `http://localhost:${process.env.APP_PORT}/api/admin/school/reset-password?token=${resetToken}`
+        const link = `${BASE_URL}?email=${email}&token=${resetToken}`
 
         // Email content
         let mailOptions = {
-            from: 'providenci.goldner96@ethereal.email', // Sender email
+            from: '"Edumin Support" <3eteamdev@gmail.com>', // Sender email
             to: email, // Recipient email
             subject: 'Reset Password', // Subject line
-            text: `Click on the following link to reset your password:\n ${link}` // Plain text body
+            html: isNew ? getHTMLOnBoard(link, name) : getHTMLReset(link, name)
         };
 
         // Validate mailOptions
-        if (!mailOptions.from || !mailOptions.to || !mailOptions.subject || !mailOptions.text) {
+        if (!mailOptions.from || !mailOptions.to || !mailOptions.subject || !mailOptions.html) {
             throw new Error('Invalid mailOptions');
         }
 
@@ -56,3 +58,39 @@ const sendResetPasswordEmail = async (email, resetToken) => {
 
 
 module.exports = sendResetPasswordEmail;
+
+
+function getHTMLOnBoard(link, name) {
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <div style="text-align: center;">
+            <img src="https://example.com/logo.png" alt="Company Logo" style="max-width: 150px; margin-bottom: 20px;">
+        </div>
+        <h2 style="color: #333; text-align: center;">Welcome aboard, ${name}!</h2>
+        <p style="color: #555; text-align: center;">We have created your admin profile.</p>
+        <p style="color: #555; text-align: center;">Click the button below to reset your password:</p>
+        <div style="text-align: center;">
+            <a href="${link}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Reset Password</a>
+        </div>
+        <p style="color: #555; text-align: center; margin-top: 20px;">Regards,<br>Edumin Team</p>
+    </div>
+    `;
+}
+
+
+function getHTMLReset(link, name) {
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9;">
+        <div style="text-align: center;">
+            <img src="https://example.com/logo.png" alt="Company Logo" style="max-width: 150px; margin-bottom: 20px;">
+        </div>
+        <h2 style="color: #333; text-align: center;">Hi, ${name}!</h2>
+        <p style="color: #555; text-align: center;">Click the button below to reset your password:</p>
+        <div style="text-align: center;">
+            <a href="${link}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: bold;">Reset Password</a>
+        </div>
+        <p style="color: #555; text-align: center; margin-top: 20px;">Regards,<br>Edumin Team</p>
+    </div>
+    `;
+}
+

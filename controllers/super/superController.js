@@ -2,8 +2,9 @@ const createError = require('http-errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { validationResult, matchedData } = require('express-validator');
-const { School, User, Role, Permission, RoleHasPermission } = require('../../models')
-
+const { School, User, Role, Permission, RoleHasPermission } = require('../../models');
+const sendResetPasswordEmail = require('../../utils/mailer');
+const { Op } = require('sequelize')
 
 // Get list of all schools
 const schoolListGetService = async (req, res, next) => {
@@ -91,7 +92,7 @@ const schoolAddNewService = async (req, res, next) => {
                 admissionListSeed(school.id)
 
                 let saltResult = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS || 10));
-                let hashedPwd = await bcrypt.hash(data.adminPwd, saltResult);
+                let hashedPwd = await bcrypt.hash("Password123@", saltResult);
 
                 let [user, userCreated] = await User.findOrCreate(
                     {
@@ -110,13 +111,22 @@ const schoolAddNewService = async (req, res, next) => {
                     });
 
                 if (userCreated) {
+                    // Generate reset token
+                    const resetToken = jwt.sign(
+                        { userId: user.email },
+                        process.env.JWT_SECRET || "123",
+                        { expiresIn: '6h' }
+                    );
 
+                    // Send reset password email
+                    const resetLink = await sendResetPasswordEmail(user.name, user.email, resetToken, true);
                     return res.status(200).json({
                         "code": 200,
                         "message": " School added Successfully !!",
                         "data": {
                             admin: user,
-                            school: school
+                            school: school,
+                            resetLink: resetLink
                         }
                     });
                 }
@@ -138,7 +148,6 @@ const schoolAddNewService = async (req, res, next) => {
                 }
             }
             else {
-                console.log(school);
                 if (school) {
                     return res.status(200).json({
                         "code": 200,
@@ -221,19 +230,15 @@ const schoolBlockAccess = async (req, res, next) => {
             }
         )
 
-        const updatedStatus = school.status === 1 ? 0 : 1
-        const result = await School.update(
-            {
-                status: updatedStatus
-            },
-            { where: { id: id } }
-        )
+        const updatedStatus = school.status === 1 ? 0 : 1;
+        const updateFields = { status: updatedStatus };
+        updateFields.blockedAt = Date();
+        const result = await School.update(updateFields, { where: { id: id } });
+        console.log(updateFields);
         return res.status(200).json({
             code: result > 0 ? 200 : 404,
             message: "Status updated",
-            data: {
-                status: updatedStatus
-            }
+            data: updateFields
         });
 
     } catch (error) {

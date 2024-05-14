@@ -30,6 +30,7 @@ router.post('/school/login', schoolLoginValidation, (req, res, next) => {
 });
 
 router.post('/school/forget-password', (req, res, next) => {
+    console.log("dvs");
     schoolForgetPasswordService(req, res, next);
 });
 

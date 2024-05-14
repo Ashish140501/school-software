@@ -190,27 +190,27 @@ const schoolAddNewValidation = {
             },
         }
     },
-    adminPwd:{
-        exists:{
-            errorMessage: "Password is required",
-            options:{checkFalsy:true},
-        },
-        notEmpty:{errorMessage:"Password cannot be empty"},
-        isString:{errorMessage: "Password should be string" },
-        trim:true,
-        escape:true,
-        isStrongPassword: {
-            minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
-        },
-        matches: {
-        options: [/^[A-Za-z0-9 .,'@#%$^&*()!-+*?,~`'";:|/]+$/],
-            errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
-          }
-    },
+    // adminPwd:{
+    //     exists:{
+    //         errorMessage: "Password is required",
+    //         options:{checkFalsy:true},
+    //     },
+    //     notEmpty:{errorMessage:"Password cannot be empty"},
+    //     isString:{errorMessage: "Password should be string" },
+    //     trim:true,
+    //     escape:true,
+    //     isStrongPassword: {
+    //         minLength: 8,
+    //         minLowercase: 1,
+    //         minUppercase: 1,
+    //         minNumbers: 1,
+    //         errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
+    //     },
+    //     matches: {
+    //     options: [/^[A-Za-z0-9 .,'@#%$^&*()!-+*?,~`'";:|/]+$/],
+    //         errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
+    //       }
+    // },
 };
 
 

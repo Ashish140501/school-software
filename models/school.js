@@ -60,6 +60,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     contactPerson: {
       type: DataTypes.STRING,
+    },
+    blockedAt: {
+      type: DataTypes.DATE
     }
   }, {
     sequelize,
