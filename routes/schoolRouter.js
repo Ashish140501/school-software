@@ -37,7 +37,7 @@ const {
     villageGetService,
     districtCreateService,
     districtGetService
-} = require('../controllers/admin/locationController')
+} = require('../controllers/settings/locationController')
 
 const {
     enquiryCount

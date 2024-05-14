@@ -190,6 +190,28 @@ const schoolAddNewValidation = {
             },
         }
     },
+    admissionNoSeq: {
+        exists:{
+            errorMessage: "admission no.seq is required",
+            options:{checkFalsy: true},
+        },
+        notEmpty: { errorMessage: "admission no.seq cannot be empty" },
+        isNumeric: { errorMessage: "admission no.seq should be in numeric" },
+        isInt:{ errorMessage: "admission no.seq should be integer" },
+        trim: true,
+        escape: true,
+    },
+    rollNoSeq: {
+        exists:{
+            errorMessage: "roll no.seq is required",
+            options:{checkFalsy: true},
+        },
+        notEmpty: { errorMessage: "roll no.seq cannot be empty" },
+        isNumeric: { errorMessage: "roll no.seq be in numeric" },
+        isInt:{ errorMessage: "roll no.seq should be integer" },
+        trim: true,
+        escape: true,
+    },
     // adminPwd:{
     //     exists:{
     //         errorMessage: "Password is required",

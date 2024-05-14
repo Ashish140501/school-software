@@ -105,6 +105,8 @@ const schoolAddNewService = async (req, res, next) => {
                             mobileNo: data.contactNo,
                             pwd: hashedPwd,
                             // imageUrl: data.imageUrl,
+                            admissionNoSeq: data.admissionNoSeq,
+                            rollNoSeq: data.rollNoSeq,
                             roleId: role.id,
                             status: data.status,
                         }
@@ -215,8 +217,6 @@ const schoolUpdateService = async (req, res, next) => {
         next(createError(500, "Something went wrong: " + error.message));
     }
 }
-
-
 
 
 // Toggle block status
