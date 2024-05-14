@@ -1,10 +1,10 @@
 const createError = require('http-errors');
 const path = require('path');
-const { sequelize, Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { Transport } = require('../../models')
+const { sequelize, Transport } = require('../../models')
 
 
 transportCreate = async (req, res, next) => {
@@ -101,7 +101,7 @@ transportGet = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: { exclude: ['createdAt', 'updatedAt'] },
+            attributes: ['id', [sequelize.fn('concat', sequelize.col('pickUp'), ', ', sequelize.col('distance'), ', ', sequelize.col('amount')), 'transport'], 'pickUp', 'distance', 'amount'],
             where: whereCondition,
             distinct: true,
             order: [[column || 'id', sort || 'ASC']],
