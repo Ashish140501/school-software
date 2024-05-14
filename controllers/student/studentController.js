@@ -311,11 +311,10 @@ studentGetService = async (req, res, next) => {
         if (searchString !== undefined && searchString !== null) {
 
             whereCondition[Op.or] = [
-                sequelize.where(sequelize.col('firstName'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('lastName'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('fatherName'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('contactNo'), { [Op.iLike]: `%${searchString}%` }),
-                sequelize.where(sequelize.col('class'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Student.firstName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Student.lastName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Student.fatherName'), { [Op.iLike]: `%${searchString}%` }),
+                sequelize.where(sequelize.col('Student.contactNo'), { [Op.iLike]: `%${searchString}%` }),
                 // sequelize.where(sequelize.col('admissionDate'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('Class.class'), { [Op.iLike]: `%${searchString}%` }),
                 sequelize.where(sequelize.col('Section.section'), { [Op.iLike]: `%${searchString}%` }),

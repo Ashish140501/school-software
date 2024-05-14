@@ -8,11 +8,11 @@ applyPassportStrategy(passport);
 
 const adminRouter = require('./adminRouter');
 const schoolRouter = require('./schoolRouter')
-const superRouter = require('./superRouter')
+// const superRouter = require('./superRouter')
 
 routerHandler.use('/admin', adminRouter);
 routerHandler.use('/school', passport.authenticate('jwt', { session: false }), schoolRouter);
-routerHandler.use('/super', superRouter);
+// routerHandler.use('/super', superRouter);
 
 routerHandler.use((req,res,next)=>{
   console.log("came");
