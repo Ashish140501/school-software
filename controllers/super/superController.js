@@ -66,6 +66,8 @@ const schoolAddNewService = async (req, res, next) => {
                     city: data.city,
                     state: data.state,
                     website: data.website,
+                    admissionNoSeq: data.admissionNoSeq,
+                    rollNoSeq: data.rollNoSeq,
                     status: 1,
                     settings: 0
                 }
@@ -105,8 +107,6 @@ const schoolAddNewService = async (req, res, next) => {
                             mobileNo: data.contactNo,
                             pwd: hashedPwd,
                             // imageUrl: data.imageUrl,
-                            admissionNoSeq: data.admissionNoSeq,
-                            rollNoSeq: data.rollNoSeq,
                             roleId: role.id,
                             status: data.status,
                         }
