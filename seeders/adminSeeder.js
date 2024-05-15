@@ -104,7 +104,7 @@ admissionListSeed = async (schoolId) => {
                     {
                         "field": "D.O.B.",
                         "status": "1",
-                        "default": "false"
+                        "default": "true"
                     },
                     {
                         "field": "Age",

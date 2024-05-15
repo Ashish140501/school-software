@@ -4,7 +4,7 @@ const { Sequelize, Op } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, Student, Family, Class, Section, Transport, School } = require('../../models')
+const { sequelize, Student, Family, Class, Section, Transport, School, Caste, Religion } = require('../../models')
 
 studentCreateService = async (req, res, next) => {
     try {
@@ -79,6 +79,7 @@ studentCreateService = async (req, res, next) => {
             });
 
             if (results) {
+                
                 let familyCreate = await Family.create({
                     schoolId: req.user.schoolId,
                     studentId: results.id,
@@ -108,17 +109,38 @@ studentCreateService = async (req, res, next) => {
                     fatherAadharNo: data.fatherAadharNo,
                     motherAadharNo: data.motherAadharNo
                 });
+                if (familyCreate) {
 
-                return res.status(200).json({
-                    "code": 200,
-                    "message": "student created successfully",
-                    "data": []
-                });
+                    let [ caste, casteCreated ] = await Caste.findOrCreate({
+                        where:{
+                            caste: data.caste
+                        }
+                    })
+    
+                    let [ religion, religionCreated ] = await Religion.findOrCreate({
+                        where:{
+                            religion: data.religion
+                        }
+                    })
+    
+                    return res.status(200).json({
+                        "code": 200,
+                        "message": "student and family created successfully",
+                        "data": []
+                    });
+                }
+                else {
+                    return res.status(400).json({
+                        "code": 400,
+                        "message": "family cannot be created",
+                        "data": []
+                    });
+                }
             }
             else {
                 return res.status(400).json({
                     "code": 400,
-                    "message": "enquiry cannot be created",
+                    "message": "student cannot be created",
                     "data": []
                 });
             }
