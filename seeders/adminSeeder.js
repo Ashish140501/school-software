@@ -263,7 +263,7 @@ admissionListSeed = async (schoolId) => {
                         "status": "1"
                     },
                     {
-                        "field": "Mother Aadhard Card No",
+                        "field": "Mother Aadhar Card No",
                         "default": "false",
                         "status": "1"
                     },
