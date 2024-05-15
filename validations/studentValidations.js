@@ -32,16 +32,6 @@ const studentCreateValidation = {
         toDate: true,
         escape: true,
     },
-    admissionNo: {
-        exists: {
-            errorMessage: "admissionNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "admissionNo cannot be empty" },
-        isString: { errorMessage: "admissionNo should be string" },
-        trim: true,
-        escape: true,
-    },
     firstName: {
         exists: {
             errorMessage: "firstName is required",
@@ -722,11 +712,7 @@ const studentUpdateValidation = {
         escape: true,
     },
     fatherAadharNo: {
-        exists: {
-            errorMessage: "fatherAadharNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "fatherAadharNo cannot be empty" },
+        optional: {},
         isString: { errorMessage: "fatherAadharNo should be string" },
         trim: true,
         escape: true,
@@ -774,11 +760,7 @@ const studentUpdateValidation = {
         escape: true,
     },
     motherAadharNo: {
-        exists: {
-            errorMessage: "motherAadharNo is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "motherAadharNo cannot be empty" },
+        optional: {},
         isString: { errorMessage: "motherAadharNo should be string" },
         trim: true,
         escape: true,
