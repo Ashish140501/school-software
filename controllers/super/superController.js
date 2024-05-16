@@ -45,7 +45,6 @@ const schoolListGetService = async (req, res, next) => {
     }
 }
 
-
 // add new school
 const schoolAddNewService = async (req, res, next) => {
     try {
@@ -66,8 +65,6 @@ const schoolAddNewService = async (req, res, next) => {
                     city: data.city,
                     state: data.state,
                     website: data.website,
-                    admissionNoSeq: data.admissionNoSeq,
-                    rollNoSeq: data.rollNoSeq,
                     status: 1,
                     settings: 0
                 }
@@ -181,8 +178,6 @@ const schoolAddNewService = async (req, res, next) => {
     }
 }
 
-
-
 // Update one school
 const schoolUpdateService = async (req, res, next) => {
     const errors = validationResult(req);
@@ -218,7 +213,6 @@ const schoolUpdateService = async (req, res, next) => {
     }
 }
 
-
 // Toggle block status
 const schoolBlockAccess = async (req, res, next) => {
     try {
@@ -246,10 +240,6 @@ const schoolBlockAccess = async (req, res, next) => {
         next(createError(500, "Something went wrong: " + error.message));
     }
 }
-
-
-
-
 
 // Toggle settings status
 const schoolSettingsEnable = async (req, res, next) => {

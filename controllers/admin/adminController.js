@@ -28,8 +28,6 @@ schoolOnboardService = async (req, res, next) => {
                     city: data.city,
                     state: data.state,
                     website: data.website,
-                    admissionNoSeq: data.admissionNoSeq,
-                    rollNoSeq: data.rollNoSeq,
                     status: 1,
                     settings: 0
                 }

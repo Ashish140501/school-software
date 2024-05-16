@@ -101,7 +101,7 @@ transportGet = async (req, res, next) => {
         }
 
         const queryOptions = {
-            attributes: ['id', [sequelize.fn('concat', sequelize.col('pickUp'), ', ', sequelize.col('distance'), ', ', sequelize.col('amount')), 'transport'], 'pickUp', 'distance', 'amount'],
+            attributes: ['id', [sequelize.fn('concat', sequelize.col('pickUp'), ', ', sequelize.col('distance'), ', ₹', sequelize.col('amount')), 'transport'], 'pickUp', 'distance', 'amount'],
             where: whereCondition,
             distinct: true,
             order: [[column || 'id', sort || 'ASC']],

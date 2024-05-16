@@ -8,6 +8,12 @@ const { S3Client } = require('@aws-sdk/client-s3');
 const multerS3 = require('multer-s3');
 
 //----controllers----//
+
+const {
+    adminSettingsCreate,
+    adminSettings
+} = require('../controllers/settings/adminSettingsController')
+
 const { 
     enquiryCreateService,
     enquiryGetService,
@@ -89,7 +95,8 @@ const {
 
 const {
     studentCreateValidation,
-    studentUpdateValidation
+    studentUpdateValidation,
+    settingValidation
 } = require('../validations/studentValidations')
 
 const {
@@ -126,6 +133,15 @@ const upload = multer({
         }
     })
 })
+
+//--admin-settings--//
+router.get('/admin/settings/get', (req, res, next) => {
+    adminSettings(req, res, next);
+});
+
+router.post('/admin/settings/create', checkSchema(settingValidation), (req, res, next) => {
+    adminSettingsCreate(req, res, next);
+});
 
 //--enquiry-routes--//
 router.post('/enquiry/create', checkSchema(enquiryCreateValidation), (req, res, next) => {
