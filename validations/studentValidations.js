@@ -785,60 +785,7 @@ const studentUpdateValidation = {
     },
 }
 
-const settingValidation = {
-
-    admissionNoSeq: {
-        exists: {
-            errorMessage: "admissionNo seq is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "admissionNo seq cannot be empty" },
-        isString: { errorMessage: "admissionNo seq should be string" },
-        trim: true,
-        escape: true,
-        custom: {
-            options: async (value, { req }) => {
-                if(value){
-                    const admission = await School.findOne({
-                        where: {
-                            id: req.user.schoolId
-                        }
-                    })
-                    if (admission.admissionNoSeq) {
-                        throw new Error('admissionNo seq already exist')
-                    }
-                }
-            },
-        } 
-    },
-    rollNoSeq: {
-        exists: {
-            errorMessage: "rollNo Seq is required",
-            options: { checkFalsy: true },
-        },
-        notEmpty: { errorMessage: "rollNo Seq cannot be empty" },
-        isString: { errorMessage: "rollNo Seq should be string" },
-        trim: true,
-        escape: true,
-        custom: {
-            options: async (value, { req }) => {
-                if(value){
-                    let admission = await School.findOne({
-                        where: {
-                            id: req.user.schoolId
-                        }
-                    })
-                    if (admission.rollNoSeq) {
-                        throw new Error('rollNoSeq already exist')
-                    }
-                }
-            },
-        } 
-    },
-}
-
 module.exports = {
     studentCreateValidation,
-    studentUpdateValidation,
-    settingValidation
+    studentUpdateValidation
 }
