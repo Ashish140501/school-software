@@ -3,7 +3,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { check, validationResult, body } = require('express-validator');
 
-const{ User, School } = require('../models')
+const{ User, School, Student } = require('../models')
 
 const schoolLoginValidation = [
     check("email")
@@ -208,8 +208,61 @@ const schoolEditValidation = [
     check('website').optional().isString().withMessage("Website URL should be string").trim().escape(),
 ];
 
+const settingUpdateValidation = {
+
+    admissionNoSeq: {
+        exists: {
+            errorMessage: "admissionNo seq is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "admissionNo seq cannot be empty" },
+        isString: { errorMessage: "admissionNo seq should be string" },
+        trim: true,
+        escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                if(value){
+                    const admissionCount = await Student.count({
+                        where: {
+                            schoolId: req.user.schoolId
+                        }
+                    })
+                    if (admissionCount > 0) {
+                        throw new Error('cannot edit when students exist')
+                    }
+                }
+            },
+        } 
+    },
+    rollNoSeq: {
+        exists: {
+            errorMessage: "rollNo Seq is required",
+            options: { checkFalsy: true },
+        },
+        notEmpty: { errorMessage: "rollNo Seq cannot be empty" },
+        isString: { errorMessage: "rollNo Seq should be string" },
+        trim: true,
+        escape: true,
+        custom: {
+            options: async (value, { req }) => {
+                if(value){
+                    const admissionCount = await Student.count({
+                        where: {
+                            schoolId: req.user.schoolId
+                        }
+                    })
+                    if (admissionCount > 0) {
+                        throw new Error('cannot edit when students exist')
+                    }
+                }
+            },
+        } 
+    },
+}
+
 module.exports = {
     schoolOnBoardValidation,
     schoolLoginValidation,
-    schoolEditValidation
+    schoolEditValidation,
+    settingUpdateValidation
 }

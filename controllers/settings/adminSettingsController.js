@@ -6,7 +6,7 @@ const { validationResult, matchedData } = require('express-validator');
 
 const { sequelize, Class, Section, School } = require('../../models')
 
-adminSettingsCreate = async (req, res, next) => {
+adminSettings = async (req, res, next) => {
 
     try {
         let result = validationResult(req);
@@ -46,7 +46,7 @@ adminSettingsCreate = async (req, res, next) => {
     }
 };
 
-adminSettings = async (req, res, next) => {
+adminSettingsGet = async (req, res, next) => {
 
     try {
         let results = await School.findOne({
@@ -100,6 +100,6 @@ adminSettings = async (req, res, next) => {
 };
 
 module.exports = {
-    adminSettingsCreate,
-    adminSettings
+    adminSettings,
+    adminSettingsGet
 }

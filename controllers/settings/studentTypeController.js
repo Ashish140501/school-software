@@ -125,8 +125,37 @@ studentTypeGet = async (req, res, next) => {
     }
 };
 
+studentTypeDelete = async (req, res, next) => {
+    try {
+        let data = req.body
+        const results = await StudentType.destroy({
+            where: {
+                id: data.id
+            }
+        }) 
+        if(results){
+            return res.status(200).json({
+                "code": 200,
+                "message": "deleted student type",
+                "data": []
+            });
+        }
+        else{
+            return res.status(400).json({
+                "code": 400,
+                "message": "failed",
+                "data": []
+            });
+        } 
+    }
+    catch (err) {
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+}
+
 module.exports = {
     studentTypeCreate,
     studentTypeUpdate,
-    studentTypeGet
+    studentTypeGet,
+    studentTypeDelete
 }

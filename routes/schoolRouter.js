@@ -10,8 +10,8 @@ const multerS3 = require('multer-s3');
 //----controllers----//
 
 const {
-    adminSettingsCreate,
-    adminSettings
+    adminSettings,
+    adminSettingsGet
 } = require('../controllers/settings/adminSettingsController')
 
 const { 
@@ -59,14 +59,16 @@ const {
 const {
     transportCreate,
     transportUpdate,
-    transportGet
+    transportGet,
+    transportDelete
 } = require('../controllers/settings/transportController')
 
 
 const {
     studentTypeCreate,
     studentTypeUpdate,
-    studentTypeGet
+    studentTypeGet,
+    studentTypeDelete
 } = require('../controllers/settings/studentTypeController')
 
 const {
@@ -78,6 +80,9 @@ const {
 
 
 //----validations----//
+const{
+    settingUpdateValidation
+} = require('../validations/adminValidations')
 const { 
     enquiryCreateValidation,
     enquiryUpdateValidation,
@@ -138,11 +143,11 @@ const upload = multer({
 
 //--admin-settings--//
 router.get('/admin/settings/get', (req, res, next) => {
-    adminSettings(req, res, next);
+    adminSettingsGet(req, res, next);
 });
 
-router.post('/admin/settings/create', checkSchema(settingValidation), (req, res, next) => {
-    adminSettingsCreate(req, res, next);
+router.post('/admin/settings/update', checkSchema(settingUpdateValidation), (req, res, next) => {
+    adminSettings(req, res, next);
 });
 
 //--enquiry-routes--//
@@ -275,6 +280,10 @@ router.get('/transport/get', (req, res, next) => {
     transportGet(req, res, next);
 });
 
+router.post('/transport/delete', (req, res, next) => {
+    transportDelete(req, res, next);
+});
+
 //--student-type-apis--//
 router.post('/student-type/create', checkSchema(studentTypeCreateValidation), (req, res, next) => {
     studentTypeCreate(req, res, next);
@@ -286,6 +295,10 @@ router.post('/student-type/update', checkSchema(studentTypeUpdateValidation), (r
 
 router.get('/student-type/get', (req, res, next) => {
     studentTypeGet(req, res, next);
+});
+
+router.post('/student-type/delete', (req, res, next) => {
+    studentTypeDelete(req, res, next);
 });
 
 //--caste-religion--//
