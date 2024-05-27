@@ -79,7 +79,9 @@ const {
 
 const {
     sessionCreateService,
-    sessionGetService
+    sessionGetService,
+    sessionUpdateService,
+    sessionDeleteService
 } = require('../controllers/settings/sessionController')
 
 
@@ -87,6 +89,7 @@ const {
 const{
     settingUpdateValidation
 } = require('../validations/adminValidations')
+
 const { 
     enquiryCreateValidation,
     enquiryUpdateValidation,
@@ -322,6 +325,14 @@ router.post('/session/create', (req, res, next) => {
 
 router.get('/session/get', (req, res, next) => {
     sessionGetService(req, res, next);
+});
+
+router.post('/session/update', (req, res, next) => {
+    sessionUpdateService(req, res, next);
+});
+
+router.post('/session/delete', (req, res, next) => {
+    sessionDeleteService(req, res, next);
 });
 
 

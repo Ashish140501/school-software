@@ -46,9 +46,9 @@ sessionGetService = async (req, res, next) => {
             schoolId: req.user.schoolId,
         };
 
-        if(admission){
-            queryOptions.order = [ [ 'createdAt', 'DESC' ]],
-            queryOptions.limit = 1
+        if (admission) {
+            queryOptions.order = [['createdAt', 'DESC']],
+                queryOptions.limit = 1
         };
 
         if (id !== undefined) {
@@ -64,7 +64,7 @@ sessionGetService = async (req, res, next) => {
 
         queryOptions.attributes = { exclude: ['createdAt', 'updatedAt'] };
         queryOptions.where = whereCondition;
-        
+
 
         const results = await Session.findAndCountAll(queryOptions);
 
@@ -73,14 +73,76 @@ sessionGetService = async (req, res, next) => {
             message: results.count > 0 ? "session exist" : "No session found",
             data: results.rows
         });
-    } 
+    }
     catch (error) {
         console.error(error);
         next(createError(500, "Something went wrong: " + error.message));
     }
 };
 
+sessionUpdateService = async (req, res, next) => {
+    try {
+        let { id, session } = req.body
+        let results = await Session.update(
+            {
+                session: session,
+            },
+            {
+                where: {
+                    id: id,
+                    schoolId: req.user.schoolId
+                }
+            }
+        );
+        if (results)
+            return res.status(200).json({
+                "code": 200,
+                "message": "updated Session",
+                "data": []
+            });
+        else
+            return res.status(200).json({
+                "code": 200,
+                "message": "Session update failed",
+                "data": []
+            });
+
+    }
+    catch (err) {
+        //console.log(err);
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+}
+
+sessionDeleteService = async (req, res, next) => {
+    try {
+        let { id } = req.body
+        const results = await Session.destroy({
+            where: {
+                id: id
+            }
+        })
+        if (results)
+            return res.status(200).json({
+                "code": 200,
+                "message": "deleted Session",
+                "data": []
+            });
+        else
+            return res.status(200).json({
+                "code": 200,
+                "message": "Session deletion failed",
+                "data": []
+            });
+    }
+    catch (err) {
+        next(createError(500, "Some thing went wrong " + err.message));
+    }
+}
+
 module.exports = {
     sessionCreateService,
-    sessionGetService
+    sessionGetService,
+    sessionUpdateService,
+    sessionDeleteService
 }
