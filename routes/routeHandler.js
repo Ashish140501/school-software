@@ -1,23 +1,22 @@
-const passport = require('passport');
 const createError = require('http-errors');
 const express = require('express');
 const routerHandler = express.Router();
+const Passport = require('passport').Passport;
+const schoolPassport = new Passport();
+
+routerHandler.use(schoolPassport.initialize());
 
 const applyPassportStrategy = require('../config/passportConfig');
-applyPassportStrategy(passport);
+applyPassportStrategy(schoolPassport);
 
 const adminRouter = require('./adminRouter');
-const schoolRouter = require('./schoolRouter')
-// const superRouter = require('./superRouter')
+const schoolRouter = require('./schoolRouter');
 
 routerHandler.use('/admin', adminRouter);
-routerHandler.use('/school', passport.authenticate('jwt', { session: false }), schoolRouter);
-// routerHandler.use('/super', superRouter);
+routerHandler.use('/school', schoolPassport.authenticate('jwt', { session: false }), schoolRouter);
 
-routerHandler.use((req,res,next)=>{
-  console.log("came");
-  console.log(req);
-    next(createError(404,"Not found"));
+routerHandler.use((req, res, next) => {
+    next(createError(404, "Not found"));
 });
 
-module.exports=routerHandler;
+module.exports = routerHandler;

@@ -5,6 +5,10 @@ const { check, validationResult } = require('express-validator');
 
 const { School } = require('../models');
 
+const validateBulkStudents = (req, res, next) => {
+    next()
+};
+
 const studentCreateValidation = {
     session: {
         exists: {
@@ -838,6 +842,7 @@ const settingValidation = {
 }
 
 module.exports = {
+    validateBulkStudents,
     studentCreateValidation,
     studentUpdateValidation,
     settingValidation

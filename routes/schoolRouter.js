@@ -50,6 +50,7 @@ const {
 } = require('../controllers/dashboard/dashboardController')
 
 const {
+    studentBulkCreateService,
     studentCreateService,
     studentUpdateService,
     studentGetService
@@ -96,7 +97,8 @@ const {
 const {
     studentCreateValidation,
     studentUpdateValidation,
-    settingValidation
+    settingValidation,
+    validateBulkStudents
 } = require('../validations/studentValidations')
 
 const {
@@ -180,6 +182,11 @@ router.get('/section/get', (req, res, next) => {
 
 
 //--student-routes--//
+router.post('/student/create-bulk',checkSchema(validateBulkStudents), (req, res, next) => {
+    studentBulkCreateService(req, res, next);
+});
+
+
 router.post('/student/create', upload.fields([
     { name: 'studentPhoto', maxCount: 1 },
     { name: 'casteCertificate', maxCount: 1 },

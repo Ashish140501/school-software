@@ -1,36 +1,161 @@
 const createError = require('http-errors');
 const path = require('path');
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, where } = require('sequelize');
 const lodash = require('lodash');
 const { validationResult, matchedData } = require('express-validator');
 
 const { sequelize, Student, Family, Class, Section, Transport, School, Caste, Religion } = require('../../models')
+
+
+studentBulkCreateService = async (req, res, next) => {
+    try {
+        // let result = validationResult(req);
+        // if (!result.isEmpty()) {
+        //     return res.status(422).json({
+        //         code: 422,
+        //         message: "Validation failed",
+        //         data: result.array()
+        //     });
+        // }
+
+        let data = req.body;
+        let students = data.students;
+        let createdStudents = [];
+        let errors = [];
+
+        for (let studentData of students) {
+            const [classInstance, classCreated] = await Class.findOrCreate({
+                where: {
+                    schoolId: parseInt(req.user.schoolId),
+                    class: studentData.class.toString()
+                },
+                defaults: {
+                    status: 1,
+                }
+            });
+
+            const [sectionInstance, sectionCreated] = await Section.findOrCreate({
+                where: {
+                    schoolId: parseInt(req.user.schoolId),
+                    classId: classInstance.id,
+                    section: studentData.section
+                },
+                defaults: {
+                    status: 1,
+                }
+            });
+
+            let existingStudent = await Student.findOne(
+                {
+                    where:
+                    {
+                        schoolId :  parseInt(req.user.schoolId),
+                        session: studentData.session,
+                        admissionNo: studentData.admissionNo
+                    }
+                });
+
+            if (existingStudent) {
+                errors.push({
+                    code: 400,
+                    message: "Student already exists for admissionNo: " + studentData.admissionNo,
+                    data: studentData
+                });
+                continue; // Skip to next
+            }
+
+            try {
+                let newStudent = await Student.create({
+                    schoolId: parseInt(req.user.schoolId),
+                    session: studentData.session,
+                    admissionDate: studentData.admissionDate,
+                    admissionNo: studentData.admissionNo,
+                    rollNo: studentData.rollNo,
+                    firstName: studentData.firstName,
+                    lastName: studentData.lastName,
+                    contactNo: studentData.contactNo,
+                    fatherName: studentData.fatherName,
+                    classId: classInstance.id,
+                    sectionId: sectionInstance.id,
+                    studentType: studentData.studentType,
+                    gender: studentData.gender,
+                    DOB: studentData.DOB,
+                    caste: studentData.caste,
+                    religion: studentData.religion,
+                    familyId: studentData.familyId,
+                    studentId: studentData.studentId,
+                    status: 1,
+                });
+
+                await Family.create({
+                    schoolId: req.user.schoolId,
+                    studentId: newStudent.id,
+                    Address: studentData.address,
+                    fatherName: studentData.fatherName,
+                });
+
+                createdStudents.push(newStudent);
+            } catch (error) {
+                errors.push({
+                    code: 400,
+                    message: "Student creation failed for admissionNo: " + studentData.admissionNo,
+                    data: studentData,
+                    error: error.message
+                });
+            }
+        }
+
+        if (errors.length > 0) {
+            return res.status(400).json({
+                code: 400,
+                message: "Errors occurred during student creation",
+                errors: errors
+            });
+        }
+
+        return res.status(200).json({
+            code: 200,
+            message: "Students created successfully",
+            data: createdStudents
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500, "Something went wrong " + err.message));
+    }
+};
+
+
+
+
+
+
 
 studentCreateService = async (req, res, next) => {
     try {
         let result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
+            console.log(data);
 
-            let admission = await Student.max( 'admissionNo', { where: { schoolId: req.user.schoolId}})
-            if(admission){
-                admission = parseInt(admission)+1
+            let admission = await Student.max('admissionNo', { where: { schoolId: req.user.schoolId } })
+            if (admission) {
+                admission = parseInt(admission) + 1
             }
-            else{
-                admission = await School.findOne({attributes:['admissionNoSeq'], where: {id: req.user.schoolId}})
+            else {
+                admission = await School.findOne({ attributes: ['admissionNoSeq'], where: { id: req.user.schoolId } })
                 admission = admission.admissionNoSeq;
             }
 
-            let rollNo = await Student.max( 'rollNo', { where: { schoolId: req.user.schoolId, classId: data.classId }})
+            let rollNo = await Student.max('rollNo', { where: { schoolId: req.user.schoolId, classId: data.classId } })
 
-            if(rollNo){
-                rollNo = parseInt(rollNo)+1
+            if (rollNo) {
+                rollNo = parseInt(rollNo) + 1
             }
-            else{
-                rollNo = await School.findOne({attributes:['rollNoSeq'], where: {id: req.user.schoolId}});
+            else {
+                rollNo = await School.findOne({ attributes: ['rollNoSeq'], where: { id: req.user.schoolId } });
                 rollNo = rollNo.rollNoSeq
             }
-            
+
             let results = await Student.create({
                 schoolId: parseInt(req.user.schoolId),
                 session: data.session,
@@ -79,7 +204,7 @@ studentCreateService = async (req, res, next) => {
             });
 
             if (results) {
-                
+
                 let familyCreate = await Family.create({
                     schoolId: req.user.schoolId,
                     studentId: results.id,
@@ -111,18 +236,18 @@ studentCreateService = async (req, res, next) => {
                 });
                 if (familyCreate) {
 
-                    let [ caste, casteCreated ] = await Caste.findOrCreate({
-                        where:{
+                    let [caste, casteCreated] = await Caste.findOrCreate({
+                        where: {
                             caste: data.caste
                         }
                     })
-    
-                    let [ religion, religionCreated ] = await Religion.findOrCreate({
-                        where:{
+
+                    let [religion, religionCreated] = await Religion.findOrCreate({
+                        where: {
                             religion: data.religion
                         }
                     })
-    
+
                     return res.status(200).json({
                         "code": 200,
                         "message": "student and family created successfully",
@@ -164,23 +289,23 @@ studentUpdateService = async (req, res, next) => {
         let result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
-            let student = await Student.findOne({ where: { id: data.id }})
-            if(!student)
+            let student = await Student.findOne({ where: { id: data.id } })
+            if (!student)
                 return res.status(400).json({
                     "code": 400,
                     "message": "student not exist",
                     "data": []
-                }); 
+                });
 
-                console.log('uploads check')
-                console.log(req.body.birthCertificate)
-                console.log(typeof req.body.birthCertificate)
+            console.log('uploads check')
+            console.log(req.body.birthCertificate)
+            console.log(typeof req.body.birthCertificate)
 
-                console.log(req.body.uploadPanCard)
-                console.log(typeof req.body.uploadPanCard)
+            console.log(req.body.uploadPanCard)
+            console.log(typeof req.body.uploadPanCard)
 
-                console.log(req.body.characterCertificate)
-                console.log(typeof req.body.characterCertificate)
+            console.log(req.body.characterCertificate)
+            console.log(typeof req.body.characterCertificate)
 
             let studentUpdate = await Student.update(
                 {
@@ -219,12 +344,12 @@ studentUpdateService = async (req, res, next) => {
                     passYear: data.passYear,
                     obtMarks: data.obtMarks,
                     percentage: data.percentage,
-                    studentPhoto: imageValidation( req.body.studentPhoto, 'studentPhoto', req ),
-                    casteCertificate: imageValidation( req.body.casteCertificate, 'casteCertificate', req ),
-                    aadharCard: imageValidation( req.body.aadharCard, 'aadharCard', req ),
-                    birthCertificate: imageValidation( req.body.birthCertificate, 'birthCertificate', req ),
-                    transferCertificate: imageValidation( req.body.transferCertificate, 'transferCertificate', req ),
-                    characterCertificate: imageValidation( req.body.characterCertificate, 'characterCertificate', req ),
+                    studentPhoto: imageValidation(req.body.studentPhoto, 'studentPhoto', req),
+                    casteCertificate: imageValidation(req.body.casteCertificate, 'casteCertificate', req),
+                    aadharCard: imageValidation(req.body.aadharCard, 'aadharCard', req),
+                    birthCertificate: imageValidation(req.body.birthCertificate, 'birthCertificate', req),
+                    transferCertificate: imageValidation(req.body.transferCertificate, 'transferCertificate', req),
+                    characterCertificate: imageValidation(req.body.characterCertificate, 'characterCertificate', req),
                     studentId: data.studentId,
                     status: 1,
                 },
@@ -243,13 +368,13 @@ studentUpdateService = async (req, res, next) => {
                         IFSCCode: data.IFSCCode,
                         accountNo: data.accountNo,
                         panNo: data.panNo,
-                        uploadPanCard: imageValidation( req.body.uploadPanCard, 'uploadPanCard', req ),
+                        uploadPanCard: imageValidation(req.body.uploadPanCard, 'uploadPanCard', req),
                         fatherName: data.fatherName,
                         fatherQualification: data.fatherQualification,
                         fatherOccupation: data.fatherOccupation,
                         fatherIncome: data.fatherIncome,
-                        fatherAadharCard: imageValidation( req.body.fatherAadharCard, 'fatherAadharCard', req ),
-                        fatherPhoto: imageValidation( req.body.fatherPhoto, 'fatherPhoto', req ),
+                        fatherAadharCard: imageValidation(req.body.fatherAadharCard, 'fatherAadharCard', req),
+                        fatherPhoto: imageValidation(req.body.fatherPhoto, 'fatherPhoto', req),
                         Address: data.Address,
                         fatherMobileNo: data.fatherMobileNo,
                         fatherEmail: data.fatherEmail,
@@ -257,8 +382,8 @@ studentUpdateService = async (req, res, next) => {
                         motherQualification: data.motherQualification,
                         motherOccupation: data.motherOccupation,
                         motherIncome: data.motherIncome,
-                        motherAadharCard: imageValidation( req.body.motherAadharCard, 'motherAadharCard', req ),
-                        motherPhoto: imageValidation( req.body.motherPhoto, 'motherPhoto', req ),
+                        motherAadharCard: imageValidation(req.body.motherAadharCard, 'motherAadharCard', req),
+                        motherPhoto: imageValidation(req.body.motherPhoto, 'motherPhoto', req),
                         motherMobileNo: data.motherMobileNo,
                         motherEmail: data.motherEmail,
                         fatherAadharNo: data.fatherAadharNo,
@@ -361,7 +486,7 @@ studentGetService = async (req, res, next) => {
         };
 
         const results = await Student.findAndCountAll(queryOptions);
-
+        console.log(results.rows);
         return res.status(200).json({
             code: 200,
             message: results.count > 0 ? "students exist" : "No students found",
@@ -380,22 +505,23 @@ studentGetService = async (req, res, next) => {
     }
 };
 
-imageValidation = ( field, value, req ) => {
+imageValidation = (field, value, req) => {
 
-    if(req.files && req.files[value]){
+    if (req.files && req.files[value]) {
         return req.files[value][0].location;
     };
 
-    if(field == null || field == ''){
+    if (field == null || field == '') {
         return ''
     };
 
-    if(field){
+    if (field) {
         return field
     };
 }
 
 module.exports = {
+    studentBulkCreateService,
     studentCreateService,
     studentUpdateService,
     studentGetService
