@@ -77,6 +77,11 @@ const {
     religionGet
 } = require('../controllers/settings/casteReligionController')
 
+const {
+    sessionCreateService,
+    sessionGetService
+} = require('../controllers/settings/sessionController')
+
 
 //----validations----//
 const{
@@ -308,6 +313,15 @@ router.post('/religion/create', (req, res, next) => {
 
 router.get('/religion/get', (req, res, next) => {
     religionGet(req, res, next);
+});
+
+//--session-routes--//
+router.post('/session/create', (req, res, next) => {
+    sessionCreateService(req, res, next);
+});
+
+router.get('/session/get', (req, res, next) => {
+    sessionGetService(req, res, next);
 });
 
 
