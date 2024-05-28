@@ -48,16 +48,16 @@ const schoolListGetService = async (req, res, next) => {
 // add new school
 const schoolAddNewService = async (req, res, next) => {
     try {
-        console.log(req.body);
         const result = validationResult(req);
         if (result.isEmpty()) {
             let data = matchedData(req);
+            console.log(data);
             let [school, schoolCreated] = await School.findOrCreate({
                 where: { name: data.name },
                 defaults: {
                     name: data.name,
-                    // logo: '',
-                    // banner: '',
+                    logo: req.files['logo'] ? req.files['logo'][0].location : '',
+                    banner: req.files['banner'] ? req.files['banner'][0].location : '',
                     contactNo: data.contactNo,
                     contactPerson: data.contactPerson,
                     alternateContactNo: data.alternateContactNo,
@@ -162,8 +162,7 @@ const schoolAddNewService = async (req, res, next) => {
                     });
                 }
             }
-        }
-        else {
+        } else {
             console.log(result.array());
             return res.status(422).json({
                 "code": 422,

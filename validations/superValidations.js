@@ -1,4 +1,5 @@
-const{ SuperUser, User } = require('../models')
+const { body, check, checkSchema } = require('express-validator');
+const { SuperUser, User } = require('../models')
 
 // register for new super user
 const superUserRegisterValidation = {
@@ -12,13 +13,13 @@ const superUserRegisterValidation = {
         trim: true,
         escape: true,
     },
-    contactNo:{
-        exists:{
+    contactNo: {
+        exists: {
             errorMessage: "contact number is required",
-            options:{checkFalsy: true},
+            options: { checkFalsy: true },
         },
         isNumeric: { errorMessage: "contact no should be in numeric" },
-        isInt:{ errorMessage: "contact no should be integer" },
+        isInt: { errorMessage: "contact no should be integer" },
         trim: true,
         escape: true,
     },
@@ -27,11 +28,11 @@ const superUserRegisterValidation = {
             errorMessage: "Email is mandatory",
             options: { checkFalsy: true },
         },
-        notEmpty: { errorMessage: "Email cannot be empty"},
+        notEmpty: { errorMessage: "Email cannot be empty" },
         isString: { errorMessage: "Email name should be string" },
         trim: true,
         escape: true,
-        isEmail: { errorMessage: "Please provide valid email"},
+        isEmail: { errorMessage: "Please provide valid email" },
         custom: {
             options: async (value, { req }) => {
                 if (value) {
@@ -44,15 +45,15 @@ const superUserRegisterValidation = {
             },
         }
     },
-    pwd:{
-        exists:{
+    pwd: {
+        exists: {
             errorMessage: "Password is required",
-            options:{checkFalsy:true},
+            options: { checkFalsy: true },
         },
-        notEmpty:{errorMessage:"Password cannot be empty"},
-        isString:{errorMessage: "Password should be string" },
-        trim:true,
-        escape:true,
+        notEmpty: { errorMessage: "Password cannot be empty" },
+        isString: { errorMessage: "Password should be string" },
+        trim: true,
+        escape: true,
         isStrongPassword: {
             minLength: 8,
             minLowercase: 1,
@@ -61,9 +62,9 @@ const superUserRegisterValidation = {
             errorMessage: "Password must be atleast 8 and contain at least one uppercase letter, one lowercase letter, and one number",
         },
         matches: {
-        options: [/^[A-Za-z0-9 .,'@#%$^&*()!-+*?,~`'";:|/]+$/],
+            options: [/^[A-Za-z0-9 .,'@#%$^&*()!-+*?,~`'";:|/]+$/],
             errorMessage: "Password must be atleast 8 and contain at least one uppercase letter, one lowercase letter, and one number",
-          }
+        }
     },
 };
 
@@ -75,19 +76,19 @@ const superUserLoginValidation = {
             errorMessage: "Email is mandatory",
             options: { checkFalsy: true },
         },
-        notEmpty: { errorMessage: "Email cannot be empty"},
+        notEmpty: { errorMessage: "Email cannot be empty" },
         isString: { errorMessage: "Email name should be string" },
         trim: true,
         escape: true,
-        isEmail: { errorMessage: "Please provide valid email"},
+        isEmail: { errorMessage: "Please provide valid email" },
     },
-    pwd:{
-        exists:{
+    pwd: {
+        exists: {
             errorMessage: "Password is required",
-            options:{checkFalsy:true},
+            options: { checkFalsy: true },
         },
-        notEmpty:{errorMessage:"Password cannot be empty"},
-        isString:{errorMessage: "Password should be string" },
+        notEmpty: { errorMessage: "Password cannot be empty" },
+        isString: { errorMessage: "Password should be string" },
     },
 };
 
@@ -190,27 +191,6 @@ const schoolAddNewValidation = {
             },
         }
     },
-    // adminPwd:{
-    //     exists:{
-    //         errorMessage: "Password is required",
-    //         options:{checkFalsy:true},
-    //     },
-    //     notEmpty:{errorMessage:"Password cannot be empty"},
-    //     isString:{errorMessage: "Password should be string" },
-    //     trim:true,
-    //     escape:true,
-    //     isStrongPassword: {
-    //         minLength: 8,
-    //         minLowercase: 1,
-    //         minUppercase: 1,
-    //         minNumbers: 1,
-    //         errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
-    //     },
-    //     matches: {
-    //     options: [/^[A-Za-z0-9 .,'@#%$^&*()!-+*?,~`'";:|/]+$/],
-    //         errorMessage: "Password must be atleast 8 and contain at least 1 uppercase letter, 1 lowercase letter, and 1 number",
-    //       }
-    // },
 };
 
 

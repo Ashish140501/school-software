@@ -1,14 +1,17 @@
 const express = require('express');
-const passport = require('passport');
+const Passport = require('passport').Passport;
 const superRouter = express.Router();
+const superPassport = new Passport();
+
+superRouter.use(superPassport.initialize());
 
 const applySuperPassportStrategy = require('../../config/superPassportConfig');
-applySuperPassportStrategy(passport);
+applySuperPassportStrategy(superPassport);
 
 const verifiedRouter = require('./verifiedRouter');
 const authRouter = require('./authRouter');
 
-superRouter.use('/v', passport.authenticate('jwt', { session: false }), verifiedRouter);
+superRouter.use('/v', superPassport.authenticate('jwt', { session: false }), verifiedRouter);
 superRouter.use('/auth', authRouter);
 
 superRouter.get('/', (req, res) => {
@@ -19,6 +22,11 @@ superRouter.get('/', (req, res) => {
             authentication: "/auth"
         }
     });
+});
+
+
+superRouter.use((req, res, next) => {
+    next(createError(404, "Not found"));
 });
 
 module.exports = superRouter;
