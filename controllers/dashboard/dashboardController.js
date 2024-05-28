@@ -5,7 +5,7 @@ const { Sequelize, Op } = require('sequelize');
 
 const { validationResult, matchedData } = require('express-validator');
 
-const { sequelize, Enquiry, Village, District} = require('../../models')
+const { sequelize, Enquiry, Student, Village, District} = require('../../models')
 
 enquiryCount = async (req, res, next) => {
     try {
@@ -19,6 +19,12 @@ enquiryCount = async (req, res, next) => {
             }
         });
 
+        const studentCount = await Student.count({
+            where: {
+                schoolId: req.user.schoolId,
+            }
+        });
+
         return res.status(200).json({
             code: 200,
             message: "dashboard data",
@@ -26,6 +32,9 @@ enquiryCount = async (req, res, next) => {
                 followUps : {
                     date: moment().format('DD-MM-YYYY'),
                     count: todayCount
+                },
+                students : {
+                    count: studentCount
                 }
             }
         });
